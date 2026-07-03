@@ -1,0 +1,18 @@
+package com.jesus.inventory.dto;
+
+import com.jesus.inventory.enums.UserRole;
+import jakarta.validation.constraints.NotBlank;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+public class LoginRequest {
+    @NotBlank(message = "Name is required")
+    private String name;
+
+    @NotBlank(message = "Password is required")
+    private String password;
+}
