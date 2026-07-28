@@ -1,12 +1,61 @@
+import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { Router, RouterLink } from '@angular/router';
+import { ApiService } from '../service/api.service';
+import { firstValueFrom } from 'rxjs';
+
 
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports: [],
+  imports: [CommonModule, FormsModule, RouterLink],
   templateUrl: './register.component.html',
   styleUrl: './register.component.css'
 })
 export class RegisterComponent {
+  constructor(
+    private router: Router,
+    private apiService: ApiService
+  ) { }
+
+  formData: any = {
+    email: '',
+    name: '',
+    phoneNumber: '',
+    password: ''
+  };
+
+  message: string | null = '';
+
+  async handleSubmit() {
+    if (!this.formData.email ||
+      !this.formData.name ||
+      !this.formData.phoneNumber ||
+      !this.formData.password) {
+
+      this.showMessage("All fields are required");
+      return;
+    }
+
+    try {
+      const response: any = await firstValueFrom(this.apiService.registerUser(this.formData));
+
+      if (response.status === 200) {
+        this.showMessage(response.message);
+        this.router.navigate(['/login']);
+      }
+    } catch (error: any) {
+      console.error('Error registering user:', error);
+      this.showMessage(error?.error?.message || error?.message || 'An error occurred during registration' + error);
+    }
+  }
+
+  showMessage(msg: string) {
+    this.message = msg;
+    setTimeout(() => {
+      this.message = null;
+    }, 3000);
+  }
 
 }
