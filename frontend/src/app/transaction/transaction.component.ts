@@ -1,12 +1,70 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { PaginationComponent } from '../pagination/pagination.component';
+import { FormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
+import { ApiService } from '../service/api.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-transaction',
   standalone: true,
-  imports: [],
+  imports: [PaginationComponent, FormsModule, CommonModule],
   templateUrl: './transaction.component.html',
   styleUrl: './transaction.component.css'
 })
-export class TransactionComponent {
+export class TransactionComponent implements OnInit {
+  constructor(
+    private apiService: ApiService,
+    private router: Router
+  ) { }
+
+  transactions: any[] = [];
+  message: string = '';
+  searchInput: string = '';
+  valueToSearch: string = '';
+  currentPage: number = 1;
+  totalPages: number = 0;
+  itemsPerPage: number = 3;
+
+  ngOnInit() {
+    this.fetchTransactions();
+  }
+
+  fetchTransactions(): void {
+    this.apiService.getAllTransactions(this.valueToSearch).subscribe({
+      next: (res: any) => {
+        const transactions = res.transactions || [];
+
+        this.totalPages = Math.ceil(transactions.length / this.itemsPerPage);
+        this.transactions = transactions.slice((this.currentPage - 1) * this.itemsPerPage, this.currentPage * this.itemsPerPage);
+      },
+      error: (error: any) => {
+        this.showMessage(error?.error?.message || error?.message || 'An error occurred while showing transactions');
+      }
+    })
+  }
+
+  handleSearch(): void {
+    this.currentPage = 1;
+    this.valueToSearch = this.searchInput;
+    this.fetchTransactions();
+  }
+
+  navigateToTransactionDetailsPage(transactionId: string): void {
+    this.router.navigate([`/transaction/${transactionId}`]);
+  }
+
+  onPageChange(page: number): void {
+    this.currentPage = page;
+    this.fetchTransactions();
+  }
+
+
+  showMessage(msg: string) {
+    this.message = msg;
+    setTimeout(() => {
+      this.message = '';
+    }, 3000);
+  }
 
 }
