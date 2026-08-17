@@ -1,0 +1,6 @@
+# Copia este archivo como "application-local.properties" (mismo directorio) y completa
+# con tus valores reales. application-local.properties NUNCA debe subirse a git.
+
+DB_USERNAME=root
+DB_PASSWORD=root
+JWT_SECRET=replace-with-a-long-random-secret-min-32-chars
