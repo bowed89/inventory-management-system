@@ -8,6 +8,7 @@ import com.jesus.inventory.entity.Product;
 import com.jesus.inventory.exceptions.NotFoundException;
 import com.jesus.inventory.repository.CategoryRepository;
 import com.jesus.inventory.repository.ProductRepository;
+import com.jesus.inventory.service.ImageStorageService;
 import com.jesus.inventory.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,10 +18,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.UUID;
 
 @Service
 @Slf4j
@@ -29,11 +28,7 @@ public class ProductServiceImpl implements ProductService {
     private final ProductRepository productRepository;
     private final ModelMapper modelMapper;
     private final CategoryRepository categoryRepository;
-
-    private static final String IMAGE_DIRECTORY = System.getProperty("user.dir") + "/product-image/";
-
-    // After the frontend is set up, write this in order the image is being saved in the public folder in the frontend
-    private static final String IMAGE_DIRECTORY_FRONTEND = "C:\\Users\\MSI GS76 STEALTH\\OneDrive\\Documentos\\TRABAJOS DESARROLLO\\SPRING\\inventory-management-system\\frontend\\public\\products\\";
+    private final ImageStorageService imageStorageService;
 
     @Override
     public Response saveProduct(ProductDTO productDTO, MultipartFile imageFile) {
@@ -50,7 +45,7 @@ public class ProductServiceImpl implements ProductService {
                 .build();
 
         if(imageFile != null) {
-            String imagePath = saveImageToFrontendPublic(imageFile);
+            String imagePath = imageStorageService.store(imageFile);
             productToSave.setImageUrl(imagePath);
         }
 
@@ -70,7 +65,7 @@ public class ProductServiceImpl implements ProductService {
 
         // check if img is associated with the update request
         if(imageFile != null && !imageFile.isEmpty()) {
-            String imagePath = saveImageToFrontendPublic(imageFile);
+            String imagePath = imageStorageService.store(imageFile);
             extistingProduct.setImageUrl(imagePath);
         }
         // check if category will be changed for the product
@@ -148,68 +143,6 @@ public class ProductServiceImpl implements ProductService {
                 .status(200)
                 .message("Product Deleted Successfully")
                 .build();
-    }
-
-    private String saveImageToFrontendPublic(MultipartFile imageFile) {
-        // validate img
-        if(!imageFile.getContentType().startsWith("image/")) {
-            throw new IllegalArgumentException("Only image files are allowed");
-        }
-
-        // create the directory to store images if it does not exist
-        File directory = new File(IMAGE_DIRECTORY_FRONTEND);
-
-        if(!directory.exists()) {
-            directory.mkdir();
-            log.info("Directory was created");
-        }
-
-        // generate unique file name for the image
-        String uniqueFileName = UUID.randomUUID() + "_" + imageFile.getOriginalFilename();
-
-        // get the absolute path of the img
-        String imagePath = IMAGE_DIRECTORY_FRONTEND + uniqueFileName;
-
-        try {
-            File destinationFile = new File(imagePath);
-            imageFile.transferTo(destinationFile); // we are transferring(writing) to this folder...
-
-        } catch (Exception e) {
-            throw new IllegalArgumentException("Error occurred while saving image " + e.getMessage());
-        }
-
-        return "products/" + uniqueFileName;
-    }
-
-    private String saveImage(MultipartFile imageFile) {
-        // validate img
-        if(!imageFile.getContentType().startsWith("image/")) {
-            throw new IllegalArgumentException("Only image files are allowed");
-        }
-
-        // create the directory to store images if it does not exist
-        File directory = new File(IMAGE_DIRECTORY);
-
-        if(!directory.exists()) {
-            directory.mkdir();
-            log.info("Directory was created");
-        }
-
-        // generate unique file name for the image
-        String uniqueFileName = UUID.randomUUID() + "_" + imageFile.getOriginalFilename();
-
-        // get the absolute path of the img
-        String imagePath = IMAGE_DIRECTORY + uniqueFileName;
-
-        try {
-            File destinationFile = new File(imagePath);
-            imageFile.transferTo(destinationFile); // we are transferring(writing) to this folder...
-
-        } catch (Exception e) {
-            throw new IllegalArgumentException("Error occurred while saving image " + e.getMessage());
-        }
-
-        return imagePath;
     }
 
 }

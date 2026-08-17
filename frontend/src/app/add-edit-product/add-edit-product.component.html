@@ -41,7 +41,7 @@
             <label for="">Product Image</label>
             <input type="file" (change)="handleImageChange($event)">
             <div *ngIf="imageUrl">
-                <img [src]="imageUrl" alt="preview" class="image-preview">
+                <img [src]="getImageUrl(imageUrl)" alt="preview" class="image-preview">
             </div>
         </div>
 

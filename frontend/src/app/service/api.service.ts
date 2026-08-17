@@ -7,7 +7,8 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class ApiService {
-  private static BASE_URL = 'http://localhost:8080/api';
+  private static SERVER_URL = 'http://localhost:8080';
+  private static BASE_URL = `${ApiService.SERVER_URL}/api`;
   private static ENCRIPTION_KEY = 'my-encryption-key';
 
   authStatusChanged = new EventEmitter<void>();
@@ -61,6 +62,12 @@ export class ApiService {
   isAdmin(): boolean {
     const role = this.getFromStorageAndDecrypt('role');
     return role === 'ADMIN';
+  }
+
+  getImageUrl(imageUrl: string | null | undefined): string {
+    if (!imageUrl) return '';
+    if (imageUrl.startsWith('data:') || imageUrl.startsWith('http')) return imageUrl;
+    return `${ApiService.SERVER_URL}/${imageUrl}`;
   }
 
   // Auth & Users API methods

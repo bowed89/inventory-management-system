@@ -57,6 +57,10 @@ export class ProductComponent implements OnInit {
     }
   }
 
+  getImageUrl(imageUrl: string): string {
+    return this.apiService.getImageUrl(imageUrl);
+  }
+
   onPageChange(page: number): void {
     this.currentPage = page;
     this.fetchProducts();

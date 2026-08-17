@@ -49,6 +49,10 @@ export class TransactionDetailsComponent implements OnInit {
     }
   }
 
+  getImageUrl(imageUrl: string): string {
+    return this.apiService.getImageUrl(imageUrl);
+  }
+
   handleUpdateStatus(): void {
     if (this.transactionId && this.status) {
       this.apiService.updateTransactionStatus(this.transactionId, this.status).subscribe({

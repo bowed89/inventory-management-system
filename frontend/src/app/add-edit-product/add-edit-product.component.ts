@@ -80,6 +80,10 @@ export class AddEditProductComponent implements OnInit {
     })
   }
 
+  getImageUrl(imageUrl: string): string {
+    return this.apiService.getImageUrl(imageUrl);
+  }
+
   handleImageChange(event: Event): void {
     const input = event.target as HTMLInputElement;
 

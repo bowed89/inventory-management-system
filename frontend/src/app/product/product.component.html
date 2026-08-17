@@ -13,7 +13,7 @@
   <div class="product-list" *ngIf="products.length > 0">
     <div class="product-item" *ngFor="let product of products">
       <img
-        [src]="product.imageUrl"
+        [src]="getImageUrl(product.imageUrl)"
         [alt]="product.name"
         class="product-image" />
       <div class="product-info">
