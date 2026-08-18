@@ -25,22 +25,8 @@ public class ProductController {
     @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<Response> saveProduct(
             @RequestParam("imageFile") MultipartFile imageFile,
-            @RequestParam("name") String  name,
-            @RequestParam("sku") String  sku,
-            @RequestParam("price") BigDecimal price,
-            @RequestParam("stockQuantity") Integer stockQuantity,
-            @RequestParam("categoryId") Long  categoryId,
-            @RequestParam(value = "description", required = false) String description
-            ) {
-
-        ProductDTO productDTO = new ProductDTO();
-        productDTO.setName(name);
-        productDTO.setSku(sku);
-        productDTO.setPrice(price);
-        productDTO.setStockQuantity(stockQuantity);
-        productDTO.setCategoryId(categoryId);
-        productDTO.setDescription(description);
-
+            @Valid @ModelAttribute ProductDTO productDTO
+    ) {
         return ResponseEntity.ok(productService.saveProduct(productDTO, imageFile));
     }
 
