@@ -1,7 +1,7 @@
 package com.jesus.inventory.security;
 
-import com.jesus.inventory.exceptions.CustomAccessDeniedHandler;
-import com.jesus.inventory.exceptions.CustomAuthenticationEntryPoint;
+import com.jesus.inventory.security.CustomAccessDeniedHandler;
+import com.jesus.inventory.security.CustomAuthenticationEntryPoint;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;

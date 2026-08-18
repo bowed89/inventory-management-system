@@ -1,0 +1,9 @@
+package com.jesus.inventory.category;
+
+import com.jesus.inventory.category.Category;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface CategoryRepository extends JpaRepository<Category, Long> {
+
+
+}

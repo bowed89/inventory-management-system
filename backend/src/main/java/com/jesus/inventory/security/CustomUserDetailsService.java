@@ -1,8 +1,8 @@
 package com.jesus.inventory.security;
 
-import com.jesus.inventory.entity.User;
-import com.jesus.inventory.exceptions.NotFoundException;
-import com.jesus.inventory.repository.UserRepository;
+import com.jesus.inventory.user.User;
+import com.jesus.inventory.common.NotFoundException;
+import com.jesus.inventory.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

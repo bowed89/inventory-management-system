@@ -1,7 +1,7 @@
 package com.jesus.inventory.security;
 
-import com.jesus.inventory.controller.ProductController;
-import com.jesus.inventory.service.ProductService;
+import com.jesus.inventory.product.ProductController;
+import com.jesus.inventory.product.ProductService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;

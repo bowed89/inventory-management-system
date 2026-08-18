@@ -1,0 +1,72 @@
+package com.jesus.inventory.product;
+
+import com.jesus.inventory.common.ApiResponse;
+import com.jesus.inventory.product.ProductDTO;
+import com.jesus.inventory.product.ProductService;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.math.BigDecimal;
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/products")
+@RequiredArgsConstructor
+public class ProductController {
+    private final ProductService productService;
+
+
+    @PostMapping("/add")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseEntity<ApiResponse<Void>> saveProduct(
+            @RequestParam("imageFile") MultipartFile imageFile,
+            @Valid @ModelAttribute ProductDTO productDTO
+    ) {
+        return ResponseEntity.ok(productService.saveProduct(productDTO, imageFile));
+    }
+
+    @PutMapping("/update")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseEntity<ApiResponse<Void>> updateProduct(
+            @RequestParam(value = "imageFile", required = false) MultipartFile imageFile,
+            @RequestParam(value = "name", required = false) String  name,
+            @RequestParam(value = "sku", required = false) String  sku,
+            @RequestParam(value = "price", required = false) BigDecimal price,
+            @RequestParam(value = "stockQuantity", required = false) Integer stockQuantity,
+            @RequestParam(value = "productId", required = true) Long  productId,
+            @RequestParam(value = "categoryId", required = false) Long  categoryId,
+            @RequestParam(value = "description", required = false) String description
+    ) {
+
+        ProductDTO productDTO = new ProductDTO();
+        productDTO.setName(name);
+        productDTO.setSku(sku);
+        productDTO.setPrice(price);
+        productDTO.setStockQuantity(stockQuantity);
+        productDTO.setCategoryId(categoryId);
+        productDTO.setProductId(productId);
+        productDTO.setDescription(description);
+
+        return ResponseEntity.ok(productService.updateProduct(productDTO, imageFile));
+    }
+    @GetMapping("/all")
+    public ResponseEntity<ApiResponse<List<ProductDTO>>> getAllProducts() {
+        return ResponseEntity.ok(productService.getAllProducts());
+    }
+
+    @DeleteMapping("/delete/{id}")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseEntity<ApiResponse<Void>> deleteProduct(@PathVariable Long id) {
+        return ResponseEntity.ok(productService.deleteProduct(id));
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<ApiResponse<ProductDTO>> getProductById(@PathVariable Long id) {
+        return ResponseEntity.ok(productService.getProductById(id));
+    }
+
+}

@@ -1,6 +1,6 @@
 package com.jesus.inventory.security;
 
-import com.jesus.inventory.entity.User;
+import com.jesus.inventory.user.User;
 import lombok.Builder;
 import lombok.Data;
 import org.jspecify.annotations.Nullable;
