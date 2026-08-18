@@ -1,8 +1,8 @@
 import { ChangeDetectorRef, Component } from '@angular/core';
 import { Router, RouterLink, RouterOutlet } from '@angular/router';
-import { ApiService } from './service/api.service';
+import { ApiService } from './core/services/api.service';
 import { CommonModule } from '@angular/common';
-import { NotificationComponent } from './notification/notification.component';
+import { NotificationComponent } from './shared/notification/notification.component';
 
 @Component({
   selector: 'app-root',
