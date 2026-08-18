@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { Component, inject } from '@angular/core';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { ApiService } from '../service/api.service';
 import { NotificationService } from '../service/notification.service';
@@ -10,36 +10,34 @@ import { firstValueFrom } from 'rxjs';
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink],
   templateUrl: './register.component.html',
   styleUrl: './register.component.css'
 })
 export class RegisterComponent {
+  private fb = inject(FormBuilder);
+
+  registerForm = this.fb.nonNullable.group({
+    name: ['', Validators.required],
+    email: ['', [Validators.required, Validators.email]],
+    password: ['', Validators.required],
+    phoneNumber: ['', Validators.required]
+  });
+
   constructor(
     private router: Router,
     private apiService: ApiService,
     private notificationService: NotificationService
   ) { }
 
-  formData: any = {
-    email: '',
-    name: '',
-    phoneNumber: '',
-    password: ''
-  };
-
   async handleSubmit() {
-    if (!this.formData.email ||
-      !this.formData.name ||
-      !this.formData.phoneNumber ||
-      !this.formData.password) {
-
+    if (this.registerForm.invalid) {
       this.notificationService.show("All fields are required");
       return;
     }
 
     try {
-      const response = await firstValueFrom(this.apiService.registerUser(this.formData));
+      const response = await firstValueFrom(this.apiService.registerUser(this.registerForm.getRawValue() as any));
 
       if (response.status === 200) {
         this.notificationService.show(response.message);

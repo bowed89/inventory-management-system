@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { Component, inject, OnInit } from '@angular/core';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { ApiService } from '../service/api.service';
 import { NotificationService } from '../service/notification.service';
@@ -8,11 +8,13 @@ import { NotificationService } from '../service/notification.service';
 @Component({
   selector: 'app-add-edit-supplier',
   standalone: true,
-  imports: [FormsModule, CommonModule, RouterLink],
+  imports: [ReactiveFormsModule, CommonModule, RouterLink],
   templateUrl: './add-edit-supplier.component.html',
   styleUrl: './add-edit-supplier.component.css',
 })
 export class AddEditSupplierComponent implements OnInit {
+  private fb = inject(FormBuilder);
+
   constructor(
     private apiService: ApiService,
     private notificationService: NotificationService,
@@ -21,10 +23,10 @@ export class AddEditSupplierComponent implements OnInit {
   isEditing: boolean = false;
   supplierId: string | null = null;
 
-  formData: any = {
-    name: '',
-    address: '',
-  };
+  supplierForm = this.fb.nonNullable.group({
+    name: ['', Validators.required],
+    address: ['', Validators.required],
+  });
 
   ngOnInit(): void {
     this.supplierId = this.router.url.split('/')[2]; //extracting supplier id from url
@@ -38,10 +40,10 @@ export class AddEditSupplierComponent implements OnInit {
     this.apiService.getSupplierById(this.supplierId!).subscribe({
       next: (res: any) => {
         if (res.status === 200) {
-          this.formData = {
+          this.supplierForm.setValue({
             name: res.data.name,
             address: res.data.address,
-          };
+          });
         }
       },
       error: (error) => {
@@ -56,13 +58,13 @@ export class AddEditSupplierComponent implements OnInit {
 
   // HANDLE FORM SUBMISSION
   handleSubmit() {
-    if (!this.formData.name || !this.formData.address) {
+    if (this.supplierForm.invalid) {
       this.notificationService.show('All fields are nessary');
       return;
     }
 
     if (this.isEditing) {
-      this.apiService.updateSupplier(this.supplierId!, this.formData).subscribe({
+      this.apiService.updateSupplier(this.supplierId!, this.supplierForm.getRawValue()).subscribe({
         next: (res: any) => {
           if (res.status === 200) {
             this.notificationService.show("Supplier updated successfully");
@@ -74,7 +76,7 @@ export class AddEditSupplierComponent implements OnInit {
         }
       })
     } else {
-      this.apiService.addSupplier(this.formData).subscribe({
+      this.apiService.addSupplier(this.supplierForm.getRawValue()).subscribe({
         next: (res: any) => {
           if (res.status === 200) {
             this.notificationService.show("Supplier Added successfully");

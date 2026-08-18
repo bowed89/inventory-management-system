@@ -1,17 +1,18 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { Component, inject, OnInit } from '@angular/core';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ApiService } from '../service/api.service';
 import { NotificationService } from '../service/notification.service';
 
 @Component({
   selector: 'app-sell',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './sell.component.html',
   styleUrl: './sell.component.css'
 })
 export class SellComponent implements OnInit {
+  private fb = inject(FormBuilder);
 
   constructor(
     private apiService: ApiService,
@@ -20,9 +21,12 @@ export class SellComponent implements OnInit {
 
 
   products: any[] = [];
-  productId: string = '';
-  description: string = '';
-  quantity: string = '';
+
+  sellForm = this.fb.nonNullable.group({
+    productId: ['', Validators.required],
+    description: [''],
+    quantity: ['', Validators.required],
+  });
 
 
   ngOnInit(): void {
@@ -44,15 +48,16 @@ export class SellComponent implements OnInit {
   }
 
   handleSubmit(): void {
-    if (!this.productId || !this.quantity) {
+    if (this.sellForm.invalid) {
       this.notificationService.show('Please fill in all fields');
       return;
     }
 
+    const formValue = this.sellForm.getRawValue();
     const body = {
-      productId: this.productId,
-      description: this.description,
-      quantity: parseInt(this.quantity, 10)
+      productId: formValue.productId!,
+      description: formValue.description ?? '',
+      quantity: parseInt(formValue.quantity!, 10)
     }
 
     this.apiService.sellProduct(body).subscribe({
@@ -69,9 +74,7 @@ export class SellComponent implements OnInit {
   }
 
   resetForm(): void {
-    this.productId = '';
-    this.description = '';
-    this.quantity = '';
+    this.sellForm.reset();
   }
 
 }

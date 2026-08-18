@@ -1,17 +1,18 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { Component, inject, OnInit } from '@angular/core';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ApiService } from '../service/api.service';
 import { NotificationService } from '../service/notification.service';
 
 @Component({
   selector: 'app-purchase',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './purchase.component.html',
   styleUrl: './purchase.component.css'
 })
 export class PurchaseComponent implements OnInit {
+  private fb = inject(FormBuilder);
 
   constructor(
     private apiService: ApiService,
@@ -20,10 +21,13 @@ export class PurchaseComponent implements OnInit {
 
   products: any[] = [];
   suppliers: any[] = [];
-  productId: string = '';
-  supplierId: string = '';
-  description: string = '';
-  quantity: string = '';
+
+  purchaseForm = this.fb.nonNullable.group({
+    productId: ['', Validators.required],
+    supplierId: ['', Validators.required],
+    description: [''],
+    quantity: ['', Validators.required],
+  });
 
   ngOnInit(): void {
     this.fetchProductsAndSuppliers();
@@ -55,16 +59,17 @@ export class PurchaseComponent implements OnInit {
   }
 
   handleSubmit(): void {
-    if (!this.productId || !this.supplierId || !this.quantity) {
+    if (this.purchaseForm.invalid) {
       this.notificationService.show('Please fill in all fields');
       return;
     }
 
+    const formValue = this.purchaseForm.getRawValue();
     const body = {
-      productId: this.productId,
-      supplierId: this.supplierId,
-      description: this.description,
-      quantity: parseInt(this.quantity, 10)
+      productId: formValue.productId!,
+      supplierId: formValue.supplierId!,
+      description: formValue.description ?? '',
+      quantity: parseInt(formValue.quantity!, 10)
     }
 
     this.apiService.purchaseProduct(body).subscribe({
@@ -81,10 +86,7 @@ export class PurchaseComponent implements OnInit {
   }
 
   resetForm(): void {
-    this.productId = '';
-    this.supplierId = '';
-    this.description = '';
-    this.quantity = '';
+    this.purchaseForm.reset();
   }
 
 }

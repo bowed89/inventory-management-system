@@ -1,9 +1,9 @@
 <div class="auth-container">
   <h2>Login</h2>
 
-  <form (ngSubmit)="handleSubmit()">
-    <input type="email" placeholder="Email..." [(ngModel)]="formData.email" name="email" required />
-    <input type="password" placeholder="Password..." [(ngModel)]="formData.password" name="password" required />
+  <form [formGroup]="loginForm" (ngSubmit)="handleSubmit()">
+    <input type="email" placeholder="Email..." formControlName="email" />
+    <input type="password" placeholder="Password..." formControlName="password" />
 
     <button type="submit">Login</button>
 

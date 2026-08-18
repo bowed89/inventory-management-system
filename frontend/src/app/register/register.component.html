@@ -1,11 +1,11 @@
 <div class="auth-container">
   <h2>Register</h2>
 
-  <form (ngSubmit)="handleSubmit()">
-    <input type="text" placeholder="Name..." [(ngModel)]="formData.name" name="name" required />
-    <input type="email" placeholder="Email..." [(ngModel)]="formData.email" name="email" required />
-    <input type="password" placeholder="Password..." [(ngModel)]="formData.password" name="password" required />
-    <input type="number" placeholder="Phone Number..." [(ngModel)]="formData.phoneNumber" name="phoneNumber" required />
+  <form [formGroup]="registerForm" (ngSubmit)="handleSubmit()">
+    <input type="text" placeholder="Name..." formControlName="name" />
+    <input type="email" placeholder="Email..." formControlName="email" />
+    <input type="password" placeholder="Password..." formControlName="password" />
+    <input type="text" placeholder="Phone Number..." formControlName="phoneNumber" />
 
     <button type="submit">Register</button>
 

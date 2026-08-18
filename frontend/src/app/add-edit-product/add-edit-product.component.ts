@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { Component, inject, OnInit } from '@angular/core';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ApiService } from '../service/api.service';
 import { NotificationService } from '../service/notification.service';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -8,12 +8,13 @@ import { ActivatedRoute, Router } from '@angular/router';
 @Component({
   selector: 'app-add-edit-product',
   standalone: true,
-  imports: [FormsModule, CommonModule],
+  imports: [ReactiveFormsModule, CommonModule],
   templateUrl: './add-edit-product.component.html',
   styleUrl: './add-edit-product.component.css'
 })
 
 export class AddEditProductComponent implements OnInit {
+  private fb = inject(FormBuilder);
 
   constructor(
     private apiService: ApiService,
@@ -23,16 +24,19 @@ export class AddEditProductComponent implements OnInit {
   ) { }
 
   productId: string | null = null;
-  name: string = '';
-  sku: string = '';
-  price: string = '';
-  stockQuantity: string = '';
-  categoryId: string = '';
-  description: string = '';
   imageFile: File | null = null;
   imageUrl: string = '';
   isEditing: boolean = false;
   categories: any[] = [];
+
+  productForm = this.fb.nonNullable.group({
+    name: ['', Validators.required],
+    sku: ['', Validators.required],
+    price: ['', Validators.required],
+    stockQuantity: ['', Validators.required],
+    categoryId: ['', Validators.required],
+    description: ['', Validators.required],
+  });
 
   ngOnInit(): void {
     this.productId = this.route.snapshot.paramMap.get('productId');
@@ -63,12 +67,14 @@ export class AddEditProductComponent implements OnInit {
         if (response.status === 200) {
           const product = response.data;
 
-          this.name = product.name;
-          this.sku = product.sku;
-          this.price = product.price;
-          this.stockQuantity = product.stockQuantity;
-          this.categoryId = product.categoryId;
-          this.description = product.description;
+          this.productForm.setValue({
+            name: product.name,
+            sku: product.sku,
+            price: product.price,
+            stockQuantity: product.stockQuantity,
+            categoryId: product.categoryId,
+            description: product.description,
+          });
           this.imageUrl = product.imageUrl;
 
         } else {
@@ -100,14 +106,21 @@ export class AddEditProductComponent implements OnInit {
 
   handleSubmit(event: Event): void {
     event.preventDefault();
+
+    if (this.productForm.invalid) {
+      this.notificationService.show('Please fill in all required fields');
+      return;
+    }
+
+    const formValue = this.productForm.getRawValue();
     const formData = new FormData();
 
-    formData.append("name", this.name);
-    formData.append("sku", this.sku);
-    formData.append("price", this.price);
-    formData.append("stockQuantity", this.stockQuantity);
-    formData.append("categoryId", this.categoryId);
-    formData.append("description", this.description);
+    formData.append("name", formValue.name!);
+    formData.append("sku", formValue.sku!);
+    formData.append("price", formValue.price!);
+    formData.append("stockQuantity", formValue.stockQuantity!);
+    formData.append("categoryId", formValue.categoryId!);
+    formData.append("description", formValue.description!);
 
     if (this.imageFile) {
       formData.append("imageFile", this.imageFile);
@@ -143,11 +156,5 @@ export class AddEditProductComponent implements OnInit {
     }
 
   }
-
-
-
-
-
-
 
 }

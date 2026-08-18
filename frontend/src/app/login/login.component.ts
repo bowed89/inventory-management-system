@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { Component, inject } from '@angular/core';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { ApiService } from '../service/api.service';
 import { NotificationService } from '../service/notification.service';
@@ -10,11 +10,17 @@ import { firstValueFrom } from 'rxjs';
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink],
   templateUrl: './login.component.html',
   styleUrl: './login.component.css'
 })
 export class LoginComponent {
+  private fb = inject(FormBuilder);
+
+  loginForm = this.fb.nonNullable.group({
+    email: ['', [Validators.required, Validators.email]],
+    password: ['', Validators.required]
+  });
 
   constructor(
     private router: Router,
@@ -22,21 +28,14 @@ export class LoginComponent {
     private notificationService: NotificationService
   ) { }
 
-  formData: any = {
-    email: '',
-    password: ''
-  };
-
   async handleSubmit() {
-    if (!this.formData.email ||
-      !this.formData.password) {
-
-      this.notificationService.show("Email and password are required");
+    if (this.loginForm.invalid) {
+      this.notificationService.show("A valid email and password are required");
       return;
     }
 
     try {
-      const response = await firstValueFrom(this.apiService.loginUser(this.formData));
+      const response = await firstValueFrom(this.apiService.loginUser(this.loginForm.getRawValue() as any));
 
       if (response.status === 200 && response.data) {
         this.apiService.saveToStorage('token', response.data.token);

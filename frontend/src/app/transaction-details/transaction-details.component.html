@@ -47,9 +47,9 @@
     </div>
 
     <!-- UPDATE TRANSACTION -->
-    <div class="section-card transaction-staus-update">
+    <div class="section-card transaction-staus-update" [formGroup]="statusForm">
       <label for="">Status: </label>
-      <select [(ngModel)]="status" id="">
+      <select formControlName="status" id="">
         <option value="PENDING">PENDING</option>
         <option value="PROCESSING">PROCESSING</option>
         <option value="COMPLETED">COMPLETED</option>

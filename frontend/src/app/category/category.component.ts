@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { Component, inject } from '@angular/core';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ApiService } from '../service/api.service';
 import { NotificationService } from '../service/notification.service';
 import { Category } from '../models/category.model';
@@ -8,15 +8,20 @@ import { Category } from '../models/category.model';
 @Component({
   selector: 'app-category',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './category.component.html',
   styleUrl: './category.component.css'
 })
 export class CategoryComponent {
+  private fb = inject(FormBuilder);
+
   categories: Category[] = [];
-  categoryName: string = '';
   isEditing: boolean = false;
   editingCategoryId: number | null = null;
+
+  categoryForm = this.fb.nonNullable.group({
+    name: ['', Validators.required]
+  });
 
   constructor(
     private apiService: ApiService,
@@ -42,16 +47,16 @@ export class CategoryComponent {
   }
 
   addCategory(): void {
-    if (!this.categoryName) {
+    if (this.categoryForm.invalid) {
       this.notificationService.show("Category name is required");
       return;
     }
 
-    this.apiService.createCategory({ name: this.categoryName }).subscribe({
+    this.apiService.createCategory({ name: this.categoryForm.value.name! }).subscribe({
       next: (response: any) => {
         if (response.status === 200) {
           this.notificationService.show("Category created successfully");
-          this.categoryName = '';
+          this.categoryForm.reset();
           this.getCategories();
         }
       },
@@ -63,15 +68,15 @@ export class CategoryComponent {
   }
 
   editCategory(): void {
-    if (!this.categoryName || !this.editingCategoryId) {
+    if (this.categoryForm.invalid || !this.editingCategoryId) {
       return;
     }
 
-    this.apiService.updateCategory(this.editingCategoryId.toString(), { name: this.categoryName }).subscribe({
+    this.apiService.updateCategory(this.editingCategoryId.toString(), { name: this.categoryForm.value.name! }).subscribe({
       next: (response: any) => {
         if (response.status === 200) {
           this.notificationService.show("Category updated successfully");
-          this.categoryName = '';
+          this.categoryForm.reset();
           this.isEditing = false;
           this.getCategories();
         }
@@ -86,7 +91,7 @@ export class CategoryComponent {
   handleEditCategory(category: Category): void {
     this.isEditing = true;
     this.editingCategoryId = category.id;
-    this.categoryName = category.name;
+    this.categoryForm.setValue({ name: category.name });
   }
 
   handleDeleteCategory(categoryId: number): void {

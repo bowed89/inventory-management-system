@@ -2,8 +2,8 @@
   <div class="category-header">
     <h1>Category</h1>
 
-    <div class="add-cat">
-      <input type="text" [(ngModel)]="categoryName" placeholder="Enter category name" />
+    <div class="add-cat" [formGroup]="categoryForm">
+      <input type="text" formControlName="name" placeholder="Enter category name" />
       <button *ngIf="!isEditing" (click)="addCategory()">Add Category</button>
       <button *ngIf="isEditing" (click)="editCategory()">Edit Category</button>
     </div>

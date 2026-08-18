@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { Component, inject, OnInit } from '@angular/core';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ApiService } from '../service/api.service';
 import { NotificationService } from '../service/notification.service';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -8,11 +8,13 @@ import { ActivatedRoute, Router } from '@angular/router';
 @Component({
   selector: 'app-transaction-details',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './transaction-details.component.html',
   styleUrl: './transaction-details.component.css'
 })
 export class TransactionDetailsComponent implements OnInit {
+  private fb = inject(FormBuilder);
+
   constructor(
     private apiService: ApiService,
     private notificationService: NotificationService,
@@ -22,7 +24,10 @@ export class TransactionDetailsComponent implements OnInit {
 
   transactionId: string | null = '';
   transaction: any = null;
-  status: string = '';
+
+  statusForm = this.fb.nonNullable.group({
+    status: ['', Validators.required]
+  });
 
   ngOnInit() {
     this.route.params.subscribe(params => {
@@ -40,7 +45,7 @@ export class TransactionDetailsComponent implements OnInit {
         next: (res: any) => {
           if (res.status === 200) {
             this.transaction = res.data;
-            this.status = res.status;
+            this.statusForm.setValue({ status: this.transaction.status });
           }
         },
         error: (error: any) => {
@@ -55,8 +60,10 @@ export class TransactionDetailsComponent implements OnInit {
   }
 
   handleUpdateStatus(): void {
-    if (this.transactionId && this.status) {
-      this.apiService.updateTransactionStatus(this.transactionId, this.status).subscribe({
+    const status = this.statusForm.value.status;
+
+    if (this.transactionId && status) {
+      this.apiService.updateTransactionStatus(this.transactionId, status).subscribe({
         next: (res: any) => {
           this.router.navigate(['/transaction']);
         },

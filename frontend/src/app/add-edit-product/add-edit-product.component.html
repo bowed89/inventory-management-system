@@ -1,36 +1,36 @@
 <div class="product-form-page">
     <h1>{{isEditing? 'Edit Product' : 'Add Product'}}</h1>
-    <form (submit)="handleSubmit($event)">
+    <form [formGroup]="productForm" (submit)="handleSubmit($event)">
         <div class="form-group">
             <label for="">Product Name</label>
-            <input type="text" [(ngModel)]="name" name="name" required>
+            <input type="text" formControlName="name">
         </div>
 
         <div class="form-group">
             <label for="">Sku</label>
-            <input type="text" [(ngModel)]="sku" name="sku" required>
+            <input type="text" formControlName="sku">
         </div>
 
         <div class="form-group">
             <label for="">Stock Quantity</label>
-            <input type="number" [(ngModel)]="stockQuantity" name="stockQuantity" required>
+            <input type="number" formControlName="stockQuantity">
         </div>
 
         <div class="form-group">
             <label for="">Price</label>
-            <input type="number" [(ngModel)]="price" name="price" required>
+            <input type="number" formControlName="price">
         </div>
 
 
         <div class="form-group">
             <label for="">Description</label>
-            <textarea [(ngModel)]="description" name="description" required></textarea>
+            <textarea formControlName="description"></textarea>
         </div>
 
 
         <div class="form-group">
             <label for="">Category</label>
-            <select [(ngModel)]="categoryId" name="categoryId" id="" required>
+            <select formControlName="categoryId" id="">
                 <option value="">Select a category</option>
                 <option *ngFor="let category of categories" [value]="category.id">{{category.name}}</option>
             </select>
