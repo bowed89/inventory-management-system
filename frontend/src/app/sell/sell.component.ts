@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ApiService } from '../service/api.service';
+import { NotificationService } from '../service/notification.service';
 
 @Component({
   selector: 'app-sell',
@@ -12,14 +13,16 @@ import { ApiService } from '../service/api.service';
 })
 export class SellComponent implements OnInit {
 
-  constructor(private apiService: ApiService) { }
+  constructor(
+    private apiService: ApiService,
+    private notificationService: NotificationService
+  ) { }
 
 
   products: any[] = [];
   productId: string = '';
   description: string = '';
   quantity: string = '';
-  message: string = '';
 
 
   ngOnInit(): void {
@@ -34,7 +37,7 @@ export class SellComponent implements OnInit {
         }
       },
       error: (error: any) => {
-        this.showMessage(error?.error?.message || error?.message || 'An error occurred while showing products');
+        this.notificationService.show(error?.error?.message || error?.message || 'An error occurred while showing products');
       }
     });
 
@@ -42,7 +45,7 @@ export class SellComponent implements OnInit {
 
   handleSubmit(): void {
     if (!this.productId || !this.quantity) {
-      this.showMessage('Please fill in all fields');
+      this.notificationService.show('Please fill in all fields');
       return;
     }
 
@@ -55,12 +58,12 @@ export class SellComponent implements OnInit {
     this.apiService.sellProduct(body).subscribe({
       next: (res: any) => {
         if (res.status === 200) {
-          this.showMessage(res.message);
+          this.notificationService.show(res.message);
           this.resetForm();
         }
       },
       error: (error: any) => {
-        this.showMessage(error?.error?.message || error?.message || 'An error occurred while selling product');
+        this.notificationService.show(error?.error?.message || error?.message || 'An error occurred while selling product');
       }
     });
   }
@@ -69,13 +72,6 @@ export class SellComponent implements OnInit {
     this.productId = '';
     this.description = '';
     this.quantity = '';
-  }
-
-  showMessage(msg: string) {
-    this.message = msg;
-    setTimeout(() => {
-      this.message = '';
-    }, 3000);
   }
 
 }

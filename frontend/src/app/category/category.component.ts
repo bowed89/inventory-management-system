@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ApiService } from '../service/api.service';
+import { NotificationService } from '../service/notification.service';
 import { Category } from '../models/category.model';
 
 @Component({
@@ -14,12 +15,12 @@ import { Category } from '../models/category.model';
 export class CategoryComponent {
   categories: Category[] = [];
   categoryName: string = '';
-  message: string = '';
   isEditing: boolean = false;
   editingCategoryId: number | null = null;
 
   constructor(
-    private apiService: ApiService
+    private apiService: ApiService,
+    private notificationService: NotificationService
   ) { }
 
   ngOnInit(): void {
@@ -35,27 +36,27 @@ export class CategoryComponent {
         }
       },
       error: (error: any) => {
-        this.showMessage(error?.error?.message || error?.message || 'Unable to get all categories' + error);
+        this.notificationService.show(error?.error?.message || error?.message || 'Unable to get all categories' + error);
       }
     });
   }
 
   addCategory(): void {
     if (!this.categoryName) {
-      this.showMessage("Category name is required");
+      this.notificationService.show("Category name is required");
       return;
     }
 
     this.apiService.createCategory({ name: this.categoryName }).subscribe({
       next: (response: any) => {
         if (response.status === 200) {
-          this.showMessage("Category created successfully");
+          this.notificationService.show("Category created successfully");
           this.categoryName = '';
           this.getCategories();
         }
       },
       error: (error: any) => {
-        this.showMessage(error?.error?.message || error?.message || 'An error occurred while creating category');
+        this.notificationService.show(error?.error?.message || error?.message || 'An error occurred while creating category');
       }
     });
 
@@ -69,14 +70,14 @@ export class CategoryComponent {
     this.apiService.updateCategory(this.editingCategoryId.toString(), { name: this.categoryName }).subscribe({
       next: (response: any) => {
         if (response.status === 200) {
-          this.showMessage("Category updated successfully");
+          this.notificationService.show("Category updated successfully");
           this.categoryName = '';
           this.isEditing = false;
           this.getCategories();
         }
       },
       error: (error: any) => {
-        this.showMessage(error?.error?.message || error?.message || 'An error occurred while updating category');
+        this.notificationService.show(error?.error?.message || error?.message || 'An error occurred while updating category');
       }
     })
 
@@ -93,22 +94,15 @@ export class CategoryComponent {
       this.apiService.deleteCategory(categoryId.toString()).subscribe({
         next: (response: any) => {
           if (response.status === 200) {
-            this.showMessage("Category deleted successfully");
+            this.notificationService.show("Category deleted successfully");
             this.getCategories();
           }
         },
         error: (error: any) => {
-          this.showMessage(error?.error?.message || error?.message || 'An error occurred while deleting category');
+          this.notificationService.show(error?.error?.message || error?.message || 'An error occurred while deleting category');
         }
       })
     }
-  }
-
-  showMessage(msg: string) {
-    this.message = msg;
-    setTimeout(() => {
-      this.message = '';
-    }, 3000);
   }
 
 }

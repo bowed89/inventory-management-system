@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ApiService } from '../service/api.service';
+import { NotificationService } from '../service/notification.service';
 import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
@@ -16,6 +17,7 @@ export class AddEditProductComponent implements OnInit {
 
   constructor(
     private apiService: ApiService,
+    private notificationService: NotificationService,
     private route: ActivatedRoute,
     private router: Router
   ) { }
@@ -31,7 +33,6 @@ export class AddEditProductComponent implements OnInit {
   imageUrl: string = '';
   isEditing: boolean = false;
   categories: any[] = [];
-  message: string = '';
 
   ngOnInit(): void {
     this.productId = this.route.snapshot.paramMap.get('productId');
@@ -51,7 +52,7 @@ export class AddEditProductComponent implements OnInit {
         }
       },
       error: (error: any) => {
-        this.showMessage(error?.error?.message || error?.message || 'An error occurred while showing categories');
+        this.notificationService.show(error?.error?.message || error?.message || 'An error occurred while showing categories');
       }
     })
   }
@@ -71,11 +72,11 @@ export class AddEditProductComponent implements OnInit {
           this.imageUrl = product.imageUrl;
 
         } else {
-          this.showMessage(response.message);
+          this.notificationService.show(response.message);
         }
       },
       error: (error: any) => {
-        this.showMessage(error?.error?.message || error?.message || 'An error occurred while showing categories');
+        this.notificationService.show(error?.error?.message || error?.message || 'An error occurred while showing categories');
       }
     })
   }
@@ -118,12 +119,12 @@ export class AddEditProductComponent implements OnInit {
       this.apiService.updateProduct(formData).subscribe({
         next: (response: any) => {
           if (response.status === 200) {
-            this.showMessage("Product updated successfully");
+            this.notificationService.show("Product updated successfully");
             this.router.navigate(['/product']);
           }
         },
         error: (error: any) => {
-          this.showMessage(error?.error?.message || error?.message || 'An error occurred while updating a product');
+          this.notificationService.show(error?.error?.message || error?.message || 'An error occurred while updating a product');
         }
       })
 
@@ -131,12 +132,12 @@ export class AddEditProductComponent implements OnInit {
       this.apiService.addProduct(formData).subscribe({
         next: (response: any) => {
           if (response.status === 200) {
-            this.showMessage("Product saved successfully");
+            this.notificationService.show("Product saved successfully");
             this.router.navigate(['/product']);
           }
         },
         error: (error: any) => {
-          this.showMessage(error?.error?.message || error?.message || 'An error occurred while saving a product');
+          this.notificationService.show(error?.error?.message || error?.message || 'An error occurred while saving a product');
         }
       })
     }
@@ -147,12 +148,6 @@ export class AddEditProductComponent implements OnInit {
 
 
 
-  showMessage(msg: string) {
-    this.message = msg;
-    setTimeout(() => {
-      this.message = '';
-    }, 3000);
-  }
 
 
 }

@@ -1,6 +1,5 @@
 <div class="auth-container">
   <h2>Register</h2>
-  <p *ngIf="message" class="message">{{ message }}</p>
 
   <form (ngSubmit)="handleSubmit()">
     <input type="text" placeholder="Name..." [(ngModel)]="formData.name" name="name" required />

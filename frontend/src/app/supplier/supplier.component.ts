@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { ApiService } from '../service/api.service';
+import { NotificationService } from '../service/notification.service';
 import { Router } from '@angular/router';
 
 @Component({
@@ -13,11 +14,11 @@ import { Router } from '@angular/router';
 export class SupplierComponent implements OnInit {
   constructor(
     private apiService: ApiService,
+    private notificationService: NotificationService,
     private router: Router
   ) { }
 
   suppliers: any[] = [];
-  message: string = '';
 
   ngOnInit(): void {
     this.getSuppliers();
@@ -30,20 +31,13 @@ export class SupplierComponent implements OnInit {
           this.suppliers = response.data;
 
         } else {
-          this.showMessage(response.message);
+          this.notificationService.show(response.message);
         }
       },
       error: (error: any) => {
-        this.showMessage(error?.error?.message || error?.message || 'Unable to get all suppliers' + error);
+        this.notificationService.show(error?.error?.message || error?.message || 'Unable to get all suppliers' + error);
       }
     });
-  }
-
-  showMessage(msg: string) {
-    this.message = msg;
-    setTimeout(() => {
-      this.message = '';
-    }, 3000);
   }
 
   navigateToAddSupplierPage() {
@@ -59,12 +53,12 @@ export class SupplierComponent implements OnInit {
       this.apiService.deleteSupplier(supplierId).subscribe({
         next: (response: any) => {
           if (response.status === 200) {
-            this.showMessage("Supplier deleted successfully");
+            this.notificationService.show("Supplier deleted successfully");
             this.getSuppliers();
           }
         },
         error: (error: any) => {
-          this.showMessage(error?.error?.message || error?.message || 'An error occurred while deleting supplier' + error);
+          this.notificationService.show(error?.error?.message || error?.message || 'An error occurred while deleting supplier' + error);
         }
       })
     }

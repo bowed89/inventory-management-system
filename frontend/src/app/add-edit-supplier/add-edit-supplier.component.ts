@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { ApiService } from '../service/api.service';
+import { NotificationService } from '../service/notification.service';
 
 @Component({
   selector: 'app-add-edit-supplier',
@@ -12,8 +13,11 @@ import { ApiService } from '../service/api.service';
   styleUrl: './add-edit-supplier.component.css',
 })
 export class AddEditSupplierComponent implements OnInit {
-  constructor(private apiService: ApiService, private router: Router) { }
-  message: string = '';
+  constructor(
+    private apiService: ApiService,
+    private notificationService: NotificationService,
+    private router: Router
+  ) { }
   isEditing: boolean = false;
   supplierId: string | null = null;
 
@@ -41,7 +45,7 @@ export class AddEditSupplierComponent implements OnInit {
         }
       },
       error: (error) => {
-        this.showMessage(
+        this.notificationService.show(
           error?.error?.message ||
           error?.message ||
           'Unable to get supplier by id' + error
@@ -53,7 +57,7 @@ export class AddEditSupplierComponent implements OnInit {
   // HANDLE FORM SUBMISSION
   handleSubmit() {
     if (!this.formData.name || !this.formData.address) {
-      this.showMessage('All fields are nessary');
+      this.notificationService.show('All fields are nessary');
       return;
     }
 
@@ -61,33 +65,26 @@ export class AddEditSupplierComponent implements OnInit {
       this.apiService.updateSupplier(this.supplierId!, this.formData).subscribe({
         next: (res: any) => {
           if (res.status === 200) {
-            this.showMessage("Supplier updated successfully");
+            this.notificationService.show("Supplier updated successfully");
             this.router.navigate(['/supplier'])
           }
         },
         error: (error) => {
-          this.showMessage(error?.error?.message || error?.message || "Unable to edit supplier" + error)
+          this.notificationService.show(error?.error?.message || error?.message || "Unable to edit supplier" + error)
         }
       })
     } else {
       this.apiService.addSupplier(this.formData).subscribe({
         next: (res: any) => {
           if (res.status === 200) {
-            this.showMessage("Supplier Added successfully");
+            this.notificationService.show("Supplier Added successfully");
             this.router.navigate(['/supplier'])
           }
         },
         error: (error) => {
-          this.showMessage(error?.error?.message || error?.message || "Unable to Add supplier" + error)
+          this.notificationService.show(error?.error?.message || error?.message || "Unable to Add supplier" + error)
         }
       })
     }
-  }
-
-  showMessage(message: string) {
-    this.message = message;
-    setTimeout(() => {
-      this.message = '';
-    }, 4000);
   }
 }

@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { ApiService } from '../service/api.service';
+import { NotificationService } from '../service/notification.service';
 
 @Component({
   selector: 'app-profile',
@@ -11,11 +12,11 @@ import { ApiService } from '../service/api.service';
 })
 export class ProfileComponent implements OnInit {
   constructor(
-    private apiService: ApiService
+    private apiService: ApiService,
+    private notificationService: NotificationService
   ) { }
 
   user: any = null;
-  message: string = '';
 
   ngOnInit(): void {
     this.fetchUserInfo();
@@ -27,16 +28,9 @@ export class ProfileComponent implements OnInit {
         this.user = res.data;
       },
       error: (error: any) => {
-        this.showMessage(error?.error?.message || error?.message || 'An error occurred while getting user info' + error);
+        this.notificationService.show(error?.error?.message || error?.message || 'An error occurred while getting user info' + error);
       }
     });
-  }
-
-  showMessage(msg: string) {
-    this.message = msg;
-    setTimeout(() => {
-      this.message = '';
-    }, 3000);
   }
 
 }

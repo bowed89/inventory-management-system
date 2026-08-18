@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ApiService } from '../service/api.service';
+import { NotificationService } from '../service/notification.service';
 import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
@@ -14,6 +15,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 export class TransactionDetailsComponent implements OnInit {
   constructor(
     private apiService: ApiService,
+    private notificationService: NotificationService,
     private router: Router,
     private route: ActivatedRoute
   ) { }
@@ -21,7 +23,6 @@ export class TransactionDetailsComponent implements OnInit {
   transactionId: string | null = '';
   transaction: any = null;
   status: string = '';
-  message: string = '';
 
   ngOnInit() {
     this.route.params.subscribe(params => {
@@ -43,7 +44,7 @@ export class TransactionDetailsComponent implements OnInit {
           }
         },
         error: (error: any) => {
-          this.showMessage(error?.error?.message || error?.message || 'An error occurred while showing transaction by id' + error);
+          this.notificationService.show(error?.error?.message || error?.message || 'An error occurred while showing transaction by id' + error);
         }
       })
     }
@@ -60,17 +61,10 @@ export class TransactionDetailsComponent implements OnInit {
           this.router.navigate(['/transaction']);
         },
         error: (error: any) => {
-          this.showMessage(error?.error?.message || error?.message || 'An error occurred while updating transaction by id' + error);
+          this.notificationService.show(error?.error?.message || error?.message || 'An error occurred while updating transaction by id' + error);
         }
 
       })
     }
-  }
-
-  showMessage(msg: string) {
-    this.message = msg;
-    setTimeout(() => {
-      this.message = '';
-    }, 3000);
   }
 }

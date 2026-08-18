@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ApiService } from '../service/api.service';
+import { NotificationService } from '../service/notification.service';
 
 @Component({
   selector: 'app-purchase',
@@ -12,7 +13,10 @@ import { ApiService } from '../service/api.service';
 })
 export class PurchaseComponent implements OnInit {
 
-  constructor(private apiService: ApiService) { }
+  constructor(
+    private apiService: ApiService,
+    private notificationService: NotificationService
+  ) { }
 
   products: any[] = [];
   suppliers: any[] = [];
@@ -20,7 +24,6 @@ export class PurchaseComponent implements OnInit {
   supplierId: string = '';
   description: string = '';
   quantity: string = '';
-  message: string = '';
 
   ngOnInit(): void {
     this.fetchProductsAndSuppliers();
@@ -34,7 +37,7 @@ export class PurchaseComponent implements OnInit {
         }
       },
       error: (error: any) => {
-        this.showMessage(error?.error?.message || error?.message || 'An error occurred while showing products');
+        this.notificationService.show(error?.error?.message || error?.message || 'An error occurred while showing products');
       }
     });
 
@@ -45,7 +48,7 @@ export class PurchaseComponent implements OnInit {
         }
       },
       error: (error: any) => {
-        this.showMessage(error?.error?.message || error?.message || 'An error occurred while showing suppliers');
+        this.notificationService.show(error?.error?.message || error?.message || 'An error occurred while showing suppliers');
       }
     });
 
@@ -53,7 +56,7 @@ export class PurchaseComponent implements OnInit {
 
   handleSubmit(): void {
     if (!this.productId || !this.supplierId || !this.quantity) {
-      this.showMessage('Please fill in all fields');
+      this.notificationService.show('Please fill in all fields');
       return;
     }
 
@@ -67,12 +70,12 @@ export class PurchaseComponent implements OnInit {
     this.apiService.purchaseProduct(body).subscribe({
       next: (res: any) => {
         if (res.status === 200) {
-          this.showMessage(res.message);
+          this.notificationService.show(res.message);
           this.resetForm();
         }
       },
       error: (error: any) => {
-        this.showMessage(error?.error?.message || error?.message || 'An error occurred while purchasing product');
+        this.notificationService.show(error?.error?.message || error?.message || 'An error occurred while purchasing product');
       }
     });
   }
@@ -82,13 +85,6 @@ export class PurchaseComponent implements OnInit {
     this.supplierId = '';
     this.description = '';
     this.quantity = '';
-  }
-
-  showMessage(msg: string) {
-    this.message = msg;
-    setTimeout(() => {
-      this.message = '';
-    }, 3000);
   }
 
 }

@@ -3,6 +3,7 @@ import { PaginationComponent } from '../pagination/pagination.component';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { ApiService } from '../service/api.service';
+import { NotificationService } from '../service/notification.service';
 import { Router } from '@angular/router';
 
 @Component({
@@ -15,11 +16,11 @@ import { Router } from '@angular/router';
 export class TransactionComponent implements OnInit {
   constructor(
     private apiService: ApiService,
+    private notificationService: NotificationService,
     private router: Router
   ) { }
 
   transactions: any[] = [];
-  message: string = '';
   searchInput: string = '';
   valueToSearch: string = '';
   currentPage: number = 1;
@@ -39,7 +40,7 @@ export class TransactionComponent implements OnInit {
         this.transactions = transactions.slice((this.currentPage - 1) * this.itemsPerPage, this.currentPage * this.itemsPerPage);
       },
       error: (error: any) => {
-        this.showMessage(error?.error?.message || error?.message || 'An error occurred while showing transactions');
+        this.notificationService.show(error?.error?.message || error?.message || 'An error occurred while showing transactions');
       }
     })
   }
@@ -57,14 +58,6 @@ export class TransactionComponent implements OnInit {
   onPageChange(page: number): void {
     this.currentPage = page;
     this.fetchTransactions();
-  }
-
-
-  showMessage(msg: string) {
-    this.message = msg;
-    setTimeout(() => {
-      this.message = '';
-    }, 3000);
   }
 
 }

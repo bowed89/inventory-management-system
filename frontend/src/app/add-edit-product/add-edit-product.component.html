@@ -1,5 +1,4 @@
 <div class="product-form-page">
-    <p *ngIf="message" class="message">{{message}}</p>
     <h1>{{isEditing? 'Edit Product' : 'Add Product'}}</h1>
     <form (submit)="handleSubmit($event)">
         <div class="form-group">

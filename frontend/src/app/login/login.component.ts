@@ -3,6 +3,7 @@ import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { ApiService } from '../service/api.service';
+import { NotificationService } from '../service/notification.service';
 import { firstValueFrom } from 'rxjs';
 
 
@@ -17,7 +18,8 @@ export class LoginComponent {
 
   constructor(
     private router: Router,
-    private apiService: ApiService
+    private apiService: ApiService,
+    private notificationService: NotificationService
   ) { }
 
   formData: any = {
@@ -25,13 +27,11 @@ export class LoginComponent {
     password: ''
   };
 
-  message: string | null = '';
-
   async handleSubmit() {
     if (!this.formData.email ||
       !this.formData.password) {
 
-      this.showMessage("Email and password are required");
+      this.notificationService.show("Email and password are required");
       return;
     }
 
@@ -45,15 +45,8 @@ export class LoginComponent {
       }
     } catch (error: any) {
       console.error(error);
-      this.showMessage(error?.error?.message || error?.message || 'Unable to login a user' + error);
+      this.notificationService.show(error?.error?.message || error?.message || 'Unable to login a user' + error);
     }
-  }
-
-  showMessage(msg: string) {
-    this.message = msg;
-    setTimeout(() => {
-      this.message = null;
-    }, 3000);
   }
 
 }

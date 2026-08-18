@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { PaginationComponent } from '../pagination/pagination.component';
 import { ApiService } from '../service/api.service';
+import { NotificationService } from '../service/notification.service';
 import { Router } from '@angular/router';
 
 @Component({
@@ -14,11 +15,11 @@ import { Router } from '@angular/router';
 export class ProductComponent implements OnInit {
   constructor(
     private apiService: ApiService,
+    private notificationService: NotificationService,
     private router: Router
   ) { }
 
   products: any[] = [];
-  message: string = '';
   currentPage: number = 1;
   totalPages: number = 0;
   itemsPerPage: number = 10;
@@ -35,7 +36,7 @@ export class ProductComponent implements OnInit {
         this.products = products.slice((this.currentPage - 1) * this.itemsPerPage, this.currentPage * this.itemsPerPage);
       },
       error: (error: any) => {
-        this.showMessage(error?.error?.message || error?.message || 'An error occurred while showing products');
+        this.notificationService.show(error?.error?.message || error?.message || 'An error occurred while showing products');
       }
     })
 
@@ -46,12 +47,12 @@ export class ProductComponent implements OnInit {
       this.apiService.deleteProduct(productId).subscribe({
         next: (response: any) => {
           if (response.status === 200) {
-            this.showMessage("Product deleted successfully");
+            this.notificationService.show("Product deleted successfully");
             this.fetchProducts();
           }
         },
         error: (error: any) => {
-          this.showMessage(error?.error?.message || error?.message || 'An error occurred while deleting product' + error);
+          this.notificationService.show(error?.error?.message || error?.message || 'An error occurred while deleting product' + error);
         }
       })
     }
@@ -72,12 +73,5 @@ export class ProductComponent implements OnInit {
 
   navigateToEditProductPage(productId: string): void {
     this.router.navigate([`/edit-product/${productId}`]);
-  }
-
-  showMessage(msg: string) {
-    this.message = msg;
-    setTimeout(() => {
-      this.message = '';
-    }, 3000);
   }
 }
