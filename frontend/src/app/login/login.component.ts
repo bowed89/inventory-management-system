@@ -39,8 +39,8 @@ export class LoginComponent {
       const response: any = await firstValueFrom(this.apiService.loginUser(this.formData));
 
       if (response.status === 200) {
-        this.apiService.encryptAndSaveStorage('token', response.token);
-        this.apiService.encryptAndSaveStorage('role', response.role);
+        this.apiService.saveToStorage('token', response.token);
+        this.apiService.saveToStorage('role', response.role);
         this.router.navigate(['/dashboard']);
       }
     } catch (error: any) {

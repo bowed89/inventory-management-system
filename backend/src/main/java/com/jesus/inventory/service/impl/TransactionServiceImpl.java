@@ -9,6 +9,7 @@ import com.jesus.inventory.entity.Transaction;
 import com.jesus.inventory.entity.User;
 import com.jesus.inventory.enums.TransactionStatus;
 import com.jesus.inventory.enums.TransactionType;
+import com.jesus.inventory.exceptions.InsufficientStockException;
 import com.jesus.inventory.exceptions.NameValueRequiredException;
 import com.jesus.inventory.exceptions.NotFoundException;
 import com.jesus.inventory.repository.ProductRepository;
@@ -25,6 +26,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -33,6 +35,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 @Slf4j
+@Transactional
 public class TransactionServiceImpl implements TransactionService {
     private final TransactionRepository transactionRepository;
     private final ModelMapper modelMapper;
@@ -87,6 +90,10 @@ public class TransactionServiceImpl implements TransactionService {
 
         Product product = productRepository.findById(productId)
                 .orElseThrow(()-> new NotFoundException("Product Not Found"));
+
+        if(product.getStockQuantity() < quantity) {
+            throw new InsufficientStockException("Not enough stock for product " + product.getName());
+        }
 
         User user =  userService.getCurrentLoggedInUser();
 

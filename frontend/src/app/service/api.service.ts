@@ -1,6 +1,5 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable, EventEmitter } from '@angular/core';
-import CryptoJs from "crypto-js";
 import { Observable } from 'rxjs';
 
 @Injectable({
@@ -9,7 +8,6 @@ import { Observable } from 'rxjs';
 export class ApiService {
   private static SERVER_URL = 'http://localhost:8080';
   private static BASE_URL = `${ApiService.SERVER_URL}/api`;
-  private static ENCRIPTION_KEY = 'my-encryption-key';
 
   authStatusChanged = new EventEmitter<void>();
 
@@ -17,22 +15,12 @@ export class ApiService {
     private http: HttpClient
   ) {}
 
-  encryptAndSaveStorage(key: string, value: string): void {
-    const encryptedValue = CryptoJs.AES.encrypt(value, ApiService.ENCRIPTION_KEY).toString();
-    localStorage.setItem(key, encryptedValue);
+  saveToStorage(key: string, value: string): void {
+    localStorage.setItem(key, value);
   }
 
-  private getFromStorageAndDecrypt(key: string): string | null {
-    try {
-      const encryptedValue = localStorage.getItem(key);
-      if(!encryptedValue) return null;
-
-      return CryptoJs.AES.decrypt(encryptedValue, ApiService.ENCRIPTION_KEY).toString(CryptoJs.enc.Utf8);
-
-    } catch (error) {
-      return null;
-    }
-
+  private getFromStorage(key: string): string | null {
+    return localStorage.getItem(key);
   }
 
   private clearAuth() {
@@ -41,7 +29,7 @@ export class ApiService {
   }
 
   private getHeaders(): HttpHeaders {
-    const token = this.getFromStorageAndDecrypt('token');
+    const token = this.getFromStorage('token');
 
     return new HttpHeaders({
       'Authorization': `Bearer ${token}`
@@ -55,12 +43,12 @@ export class ApiService {
   }
 
   isAuthenticated(): boolean {
-    const token = this.getFromStorageAndDecrypt('token');
+    const token = this.getFromStorage('token');
     return !!token;
   }
 
   isAdmin(): boolean {
-    const role = this.getFromStorageAndDecrypt('role');
+    const role = this.getFromStorage('role');
     return role === 'ADMIN';
   }
 
