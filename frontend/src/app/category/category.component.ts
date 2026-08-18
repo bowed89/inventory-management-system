@@ -2,11 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ApiService } from '../service/api.service';
-
-interface Category {
-  id: string,
-  name: string
-}
+import { Category } from '../models/category.model';
 
 @Component({
   selector: 'app-category',
@@ -20,7 +16,7 @@ export class CategoryComponent {
   categoryName: string = '';
   message: string = '';
   isEditing: boolean = false;
-  editingCategoryId: string | null = null;
+  editingCategoryId: number | null = null;
 
   constructor(
     private apiService: ApiService
@@ -70,7 +66,7 @@ export class CategoryComponent {
       return;
     }
 
-    this.apiService.updateCategory(this.editingCategoryId, { name: this.categoryName }).subscribe({
+    this.apiService.updateCategory(this.editingCategoryId.toString(), { name: this.categoryName }).subscribe({
       next: (response: any) => {
         if (response.status === 200) {
           this.showMessage("Category updated successfully");
@@ -92,9 +88,9 @@ export class CategoryComponent {
     this.categoryName = category.name;
   }
 
-  handleDeleteCategory(categoryId: string): void {
+  handleDeleteCategory(categoryId: number): void {
     if (window.confirm("Are you sure you want to delete this category?")) {
-      this.apiService.deleteCategory(categoryId).subscribe({
+      this.apiService.deleteCategory(categoryId.toString()).subscribe({
         next: (response: any) => {
           if (response.status === 200) {
             this.showMessage("Category deleted successfully");
