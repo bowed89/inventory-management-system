@@ -27,7 +27,7 @@ export class SupplierComponent implements OnInit {
     this.apiService.getAllSuppliers().subscribe({
       next: (response: any) => {
         if (response.status === 200) {
-          this.suppliers = response.suppliers;
+          this.suppliers = response.data;
 
         } else {
           this.showMessage(response.message);

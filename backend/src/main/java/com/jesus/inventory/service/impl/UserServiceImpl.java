@@ -1,8 +1,9 @@
 package com.jesus.inventory.service.impl;
 
+import com.jesus.inventory.dto.ApiResponse;
+import com.jesus.inventory.dto.LoginData;
 import com.jesus.inventory.dto.LoginRequest;
 import com.jesus.inventory.dto.RegisterRequest;
-import com.jesus.inventory.dto.Response;
 import com.jesus.inventory.dto.UserDTO;
 import com.jesus.inventory.entity.User;
 import com.jesus.inventory.enums.UserRole;
@@ -33,7 +34,7 @@ public class UserServiceImpl implements UserService {
     public final JwtUtils jwtUtils;
 
     @Override
-    public Response registerUser(RegisterRequest registerRequest) {
+    public ApiResponse<Void> registerUser(RegisterRequest registerRequest) {
         UserRole role = UserRole.MANAGER;
 
         if(registerRequest.getRole() != null) {
@@ -50,7 +51,7 @@ public class UserServiceImpl implements UserService {
 
         userRepository.save(userToSave);
 
-        return Response.builder()
+        return ApiResponse.<Void>builder()
                 .status(200)
                 .message("User created successfully")
                 .build();
@@ -58,7 +59,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Response loginUser(LoginRequest loginRequest) {
+    public ApiResponse<LoginData> loginUser(LoginRequest loginRequest) {
         User user = userRepository.findByEmail(loginRequest.getEmail())
                 .orElseThrow(() -> new NotFoundException("Email not Found"));
 
@@ -68,25 +69,27 @@ public class UserServiceImpl implements UserService {
 
         String token = jwtUtils.generateToken(user.getEmail());
 
-        return Response.builder()
+        return ApiResponse.<LoginData>builder()
                 .status(200)
                 .message("User logged in successfully")
-                .role(user.getRole())
-                .token(token)
-                .expirationTime("12 weeks")
+                .data(LoginData.builder()
+                        .role(user.getRole())
+                        .token(token)
+                        .expirationTime("12 weeks")
+                        .build())
                 .build();
     }
 
     @Override
-    public Response getAllUsers() {
+    public ApiResponse<List<UserDTO>> getAllUsers() {
         List<User> users = userRepository.findAll(Sort.by(Sort.Direction.DESC, "id"));
         List<UserDTO> userDTOS = modelMapper.map(users, new TypeToken<List<UserDTO>>() {}.getType());
         userDTOS.forEach(userDTO -> userDTO.setTransactions(null));
 
-        return Response.builder()
+        return ApiResponse.<List<UserDTO>>builder()
                 .status(200)
                 .message("Success")
-                .users(userDTOS)
+                .data(userDTOS)
                 .build();
     }
 
@@ -104,7 +107,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Response updateUser(Long id, UserDTO userDTO) {
+    public ApiResponse<Void> updateUser(Long id, UserDTO userDTO) {
 
         User existingUser = userRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("User Not Found"));
@@ -120,21 +123,21 @@ public class UserServiceImpl implements UserService {
 
         userRepository.save(existingUser);
 
-        return Response.builder()
+        return ApiResponse.<Void>builder()
                 .status(200)
                 .message("User Updated Successfully")
                 .build();
     }
 
     @Override
-    public Response deleteUser(Long id) {
+    public ApiResponse<Void> deleteUser(Long id) {
 
         userRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("User Not Found"));
 
         userRepository.deleteById(id);
 
-        return Response.builder()
+        return ApiResponse.<Void>builder()
                 .status(200)
                 .message("User Deleted Successfully")
                 .build();
@@ -142,7 +145,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Response getUserTransactions(Long id) {
+    public ApiResponse<UserDTO> getUserTransactions(Long id) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("User Not Found"));
 
@@ -152,10 +155,10 @@ public class UserServiceImpl implements UserService {
             transactionDTO.setSupplier(null);
         });
 
-        return Response.builder()
+        return ApiResponse.<UserDTO>builder()
                 .status(200)
                 .message("Success")
-                .user(userDTO)
+                .data(userDTO)
                 .build();
 
     }

@@ -33,7 +33,7 @@ export class TransactionComponent implements OnInit {
   fetchTransactions(): void {
     this.apiService.getAllTransactions(this.valueToSearch).subscribe({
       next: (res: any) => {
-        const transactions = res.transactions || [];
+        const transactions = res.data || [];
 
         this.totalPages = Math.ceil(transactions.length / this.itemsPerPage);
         this.transactions = transactions.slice((this.currentPage - 1) * this.itemsPerPage, this.currentPage * this.itemsPerPage);

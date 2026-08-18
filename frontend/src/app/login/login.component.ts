@@ -36,11 +36,11 @@ export class LoginComponent {
     }
 
     try {
-      const response: any = await firstValueFrom(this.apiService.loginUser(this.formData));
+      const response = await firstValueFrom(this.apiService.loginUser(this.formData));
 
-      if (response.status === 200) {
-        this.apiService.saveToStorage('token', response.token);
-        this.apiService.saveToStorage('role', response.role);
+      if (response.status === 200 && response.data) {
+        this.apiService.saveToStorage('token', response.data.token);
+        this.apiService.saveToStorage('role', response.data.role);
         this.router.navigate(['/dashboard']);
       }
     } catch (error: any) {

@@ -1,14 +1,10 @@
 package com.jesus.inventory.service.impl;
 
-import com.jesus.inventory.dto.CategoryDTO;
-import com.jesus.inventory.dto.Response;
+import com.jesus.inventory.dto.ApiResponse;
 import com.jesus.inventory.dto.SupplierDTO;
-import com.jesus.inventory.entity.Category;
 import com.jesus.inventory.entity.Supplier;
 import com.jesus.inventory.exceptions.NotFoundException;
-import com.jesus.inventory.repository.CategoryRepository;
 import com.jesus.inventory.repository.SupplierRepository;
-import com.jesus.inventory.service.CategoryService;
 import com.jesus.inventory.service.SupplierService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,18 +23,18 @@ public class SupplierServiceImpl implements SupplierService {
     private final ModelMapper modelMapper;
 
     @Override
-    public Response addSupplier(SupplierDTO supplierDTO) {
+    public ApiResponse<Void> addSupplier(SupplierDTO supplierDTO) {
         Supplier supplierToSave = modelMapper.map(supplierDTO, Supplier.class);
         supplierRepository.save(supplierToSave);
 
-        return Response.builder()
+        return ApiResponse.<Void>builder()
                 .status(200)
                 .message("Supplier created successfully")
                 .build();
     }
 
     @Override
-    public Response updateSupplier(Long id, SupplierDTO supplierDTO) {
+    public ApiResponse<Void> updateSupplier(Long id, SupplierDTO supplierDTO) {
         Supplier existingSupplier = supplierRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Supplier Not Found"));
 
@@ -47,7 +43,7 @@ public class SupplierServiceImpl implements SupplierService {
 
         supplierRepository.save(existingSupplier);
 
-        return Response.builder()
+        return ApiResponse.<Void>builder()
                 .status(200)
                 .message("Supplier Updated Successfully")
                 .build();
@@ -55,40 +51,40 @@ public class SupplierServiceImpl implements SupplierService {
 
 
     @Override
-    public Response getAllSuppliers() {
+    public ApiResponse<List<SupplierDTO>> getAllSuppliers() {
         List<Supplier> suppliers = supplierRepository.findAll(Sort.by(Sort.Direction.DESC, "id"));
         List<SupplierDTO> supplierDTOS = modelMapper.map(suppliers, new TypeToken<List<SupplierDTO>>() {}.getType());
 
-        return Response.builder()
+        return ApiResponse.<List<SupplierDTO>>builder()
                 .status(200)
                 .message("Success")
-                .suppliers(supplierDTOS)
+                .data(supplierDTOS)
                 .build();
     }
 
     @Override
-    public Response getSupplierById(Long id) {
+    public ApiResponse<SupplierDTO> getSupplierById(Long id) {
         Supplier supplier = supplierRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Supplier Not Found"));
 
         SupplierDTO supplierDTO = modelMapper.map(supplier, SupplierDTO.class);
 
-        return Response.builder()
+        return ApiResponse.<SupplierDTO>builder()
                 .status(200)
                 .message("Success")
-                .supplier(supplierDTO)
+                .data(supplierDTO)
                 .build();
     }
 
 
     @Override
-    public Response deleteSupplier(Long id) {
+    public ApiResponse<Void> deleteSupplier(Long id) {
         supplierRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Supplier Not Found"));
 
         supplierRepository.deleteById(id);
 
-        return Response.builder()
+        return ApiResponse.<Void>builder()
                 .status(200)
                 .message("Supplier Deleted Successfully")
                 .build();

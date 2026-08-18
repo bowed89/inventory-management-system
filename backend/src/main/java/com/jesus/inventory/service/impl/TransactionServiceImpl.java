@@ -1,6 +1,6 @@
 package com.jesus.inventory.service.impl;
 
-import com.jesus.inventory.dto.Response;
+import com.jesus.inventory.dto.ApiResponse;
 import com.jesus.inventory.dto.TransactionDTO;
 import com.jesus.inventory.dto.TransactionRequest;
 import com.jesus.inventory.entity.Product;
@@ -44,7 +44,7 @@ public class TransactionServiceImpl implements TransactionService {
     private final ProductRepository productRepository;
 
     @Override
-    public Response restockInventory(TransactionRequest transactionRequest) {
+    public ApiResponse<Void> restockInventory(TransactionRequest transactionRequest) {
         Long productId = transactionRequest.getProductId();
         Long supplierId = transactionRequest.getSupplierId();
         Integer quantity = transactionRequest.getQuantity();
@@ -77,14 +77,14 @@ public class TransactionServiceImpl implements TransactionService {
 
         transactionRepository.save(transaction);
 
-        return Response.builder()
+        return ApiResponse.<Void>builder()
                 .status(200)
                 .message("Transaction Created Successfully")
                 .build();
     }
 
     @Override
-    public Response sell(TransactionRequest transactionRequest) {
+    public ApiResponse<Void> sell(TransactionRequest transactionRequest) {
         Long productId = transactionRequest.getProductId();
         Integer quantity = transactionRequest.getQuantity();
 
@@ -114,14 +114,14 @@ public class TransactionServiceImpl implements TransactionService {
 
         transactionRepository.save(transaction);
 
-        return Response.builder()
+        return ApiResponse.<Void>builder()
                 .status(200)
                 .message("Transaction Sold Successfully")
                 .build();
     }
 
     @Override
-    public Response returnToSupplier(TransactionRequest transactionRequest) {
+    public ApiResponse<Void> returnToSupplier(TransactionRequest transactionRequest) {
         Long productId = transactionRequest.getProductId();
         Long supplierId = transactionRequest.getSupplierId();
         Integer quantity = transactionRequest.getQuantity();
@@ -154,14 +154,14 @@ public class TransactionServiceImpl implements TransactionService {
 
         transactionRepository.save(transaction);
 
-        return Response.builder()
+        return ApiResponse.<Void>builder()
                 .status(200)
                 .message("Transaction Returned Successfully Initialized")
                 .build();
     }
 
     @Override
-    public Response getAllTransactions(int page, int size, String searchText) {
+    public ApiResponse<List<TransactionDTO>> getAllTransactions(int page, int size, String searchText) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "id"));
         Page<Transaction> transactionPage = transactionRepository.searchTransactions(searchText, pageable);
         List<TransactionDTO> transactionDTOS = modelMapper
@@ -173,15 +173,17 @@ public class TransactionServiceImpl implements TransactionService {
             transactionDTOItem.setSupplier(null);
         });
 
-        return Response.builder()
+        return ApiResponse.<List<TransactionDTO>>builder()
                 .status(200)
                 .message("Success")
-                .transactions(transactionDTOS)
+                .data(transactionDTOS)
+                .totalPages(transactionPage.getTotalPages())
+                .totalElement(transactionPage.getTotalElements())
                 .build();
     }
 
     @Override
-    public Response getTransactionById(Long id) {
+    public ApiResponse<TransactionDTO> getTransactionById(Long id) {
         Transaction transaction = transactionRepository.findById(id)
                 .orElseThrow(()-> new NotFoundException("Transaction Not Found"));
 
@@ -189,16 +191,16 @@ public class TransactionServiceImpl implements TransactionService {
         // removing user transaction list
         transactionDTO.getUser().setTransactions(null);
 
-        return Response.builder()
+        return ApiResponse.<TransactionDTO>builder()
                 .status(200)
                 .message("Success")
-                .transaction(transactionDTO)
+                .data(transactionDTO)
                 .build();
 
     }
 
     @Override
-    public Response getAllTransactionsByMonthAndYear(int month, int year) {
+    public ApiResponse<List<TransactionDTO>> getAllTransactionsByMonthAndYear(int month, int year) {
 
         List<Transaction> transactions = transactionRepository.findAllByMonthAndYear(month, year);
         List<TransactionDTO> transactionDTOS = modelMapper
@@ -210,15 +212,15 @@ public class TransactionServiceImpl implements TransactionService {
             transactionDTOItem.setSupplier(null);
         });
 
-        return Response.builder()
+        return ApiResponse.<List<TransactionDTO>>builder()
                 .status(200)
                 .message("Success")
-                .transactions(transactionDTOS)
+                .data(transactionDTOS)
                 .build();
     }
 
     @Override
-    public Response updateTransactionStatus(Long transactionId, TransactionStatus transactionStatus) {
+    public ApiResponse<Void> updateTransactionStatus(Long transactionId, TransactionStatus transactionStatus) {
         Transaction existingTransaction = transactionRepository.findById(transactionId)
                 .orElseThrow(()-> new NotFoundException("Transaction Not Found"));
 
@@ -227,7 +229,7 @@ public class TransactionServiceImpl implements TransactionService {
 
         transactionRepository.save(existingTransaction);
 
-        return Response.builder()
+        return ApiResponse.<Void>builder()
                 .status(200)
                 .message("Transaction Status Successfully Updated")
                 .build();

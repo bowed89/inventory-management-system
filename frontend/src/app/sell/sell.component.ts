@@ -30,7 +30,7 @@ export class SellComponent implements OnInit {
     this.apiService.getAllProducts().subscribe({
       next: (res: any) => {
         if (res.status === 200) {
-          this.products = res.products;
+          this.products = res.data;
         }
       },
       error: (error: any) => {

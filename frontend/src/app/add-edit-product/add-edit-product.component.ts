@@ -47,7 +47,7 @@ export class AddEditProductComponent implements OnInit {
     this.apiService.getAllCategories().subscribe({
       next: (response: any) => {
         if (response.status === 200) {
-          this.categories = response.categories;
+          this.categories = response.data;
         }
       },
       error: (error: any) => {
@@ -60,7 +60,7 @@ export class AddEditProductComponent implements OnInit {
     this.apiService.getProductById(productId).subscribe({
       next: (response: any) => {
         if (response.status === 200) {
-          const product = response.product;
+          const product = response.data;
 
           this.name = product.name;
           this.sku = product.sku;

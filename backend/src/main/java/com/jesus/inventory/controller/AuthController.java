@@ -1,8 +1,9 @@
 package com.jesus.inventory.controller;
 
+import com.jesus.inventory.dto.ApiResponse;
+import com.jesus.inventory.dto.LoginData;
 import com.jesus.inventory.dto.LoginRequest;
 import com.jesus.inventory.dto.RegisterRequest;
-import com.jesus.inventory.dto.Response;
 import com.jesus.inventory.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -19,12 +20,12 @@ public class AuthController {
     private final UserService userService;
 
     @PostMapping("/register")
-    public ResponseEntity<Response> registerUser(@RequestBody @Valid RegisterRequest registerRequest) {
+    public ResponseEntity<ApiResponse<Void>> registerUser(@RequestBody @Valid RegisterRequest registerRequest) {
         return ResponseEntity.ok(userService.registerUser(registerRequest));
     }
 
     @PostMapping("/login")
-    public ResponseEntity<Response> loginUser(@RequestBody @Valid LoginRequest loginRequest) {
+    public ResponseEntity<ApiResponse<LoginData>> loginUser(@RequestBody @Valid LoginRequest loginRequest) {
         return ResponseEntity.ok(userService.loginUser(loginRequest));
     }
 

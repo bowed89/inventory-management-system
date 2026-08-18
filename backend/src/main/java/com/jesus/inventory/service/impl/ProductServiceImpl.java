@@ -1,8 +1,7 @@
 package com.jesus.inventory.service.impl;
 
-import com.jesus.inventory.dto.CategoryDTO;
+import com.jesus.inventory.dto.ApiResponse;
 import com.jesus.inventory.dto.ProductDTO;
-import com.jesus.inventory.dto.Response;
 import com.jesus.inventory.entity.Category;
 import com.jesus.inventory.entity.Product;
 import com.jesus.inventory.exceptions.NotFoundException;
@@ -31,7 +30,7 @@ public class ProductServiceImpl implements ProductService {
     private final ImageStorageService imageStorageService;
 
     @Override
-    public Response saveProduct(ProductDTO productDTO, MultipartFile imageFile) {
+    public ApiResponse<Void> saveProduct(ProductDTO productDTO, MultipartFile imageFile) {
         Category category = categoryRepository.findById(productDTO.getCategoryId())
                 .orElseThrow(()-> new NotFoundException("Category Not Found"));
 
@@ -51,7 +50,7 @@ public class ProductServiceImpl implements ProductService {
 
         productRepository.save(productToSave);
 
-        return Response.builder()
+        return ApiResponse.<Void>builder()
                 .status(200)
                 .message("Product Saved Successfully")
                 .build();
@@ -59,7 +58,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Response updateProduct(ProductDTO productDTO, MultipartFile imageFile) {
+    public ApiResponse<Void> updateProduct(ProductDTO productDTO, MultipartFile imageFile) {
         Product extistingProduct = productRepository.findById(productDTO.getProductId())
                 .orElseThrow(()-> new NotFoundException("Product Not Found"));
 
@@ -102,44 +101,44 @@ public class ProductServiceImpl implements ProductService {
         productRepository.save(extistingProduct);
 
 
-        return Response.builder()
+        return ApiResponse.<Void>builder()
                 .status(200)
                 .message("Product Updated Successfully")
                 .build();
     }
 
     @Override
-    public Response getAllProducts() {
+    public ApiResponse<List<ProductDTO>> getAllProducts() {
         List<Product> products = productRepository.findAll(Sort.by(Sort.Direction.DESC, "id"));
         List<ProductDTO> productDTOS = modelMapper.map(products, new TypeToken<List<ProductDTO>>() {}.getType());
 
-        return Response.builder()
+        return ApiResponse.<List<ProductDTO>>builder()
                 .status(200)
                 .message("Success")
-                .products(productDTOS)
+                .data(productDTOS)
                 .build();
     }
 
     @Override
-    public Response getProductById(Long id) {
+    public ApiResponse<ProductDTO> getProductById(Long id) {
         Product product = productRepository.findById(id)
                 .orElseThrow(()-> new NotFoundException("Product Not Found"));
 
-        return Response.builder()
+        return ApiResponse.<ProductDTO>builder()
                 .status(200)
                 .message("Success")
-                .product(modelMapper.map(product, ProductDTO.class))
+                .data(modelMapper.map(product, ProductDTO.class))
                 .build();
     }
 
     @Override
-    public Response deleteProduct(Long id) {
+    public ApiResponse<Void> deleteProduct(Long id) {
         productRepository.findById(id)
                 .orElseThrow(()-> new NotFoundException("Product Not Found"));
 
         productRepository.deleteById(id);
 
-        return Response.builder()
+        return ApiResponse.<Void>builder()
                 .status(200)
                 .message("Product Deleted Successfully")
                 .build();

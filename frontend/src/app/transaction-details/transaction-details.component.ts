@@ -38,7 +38,7 @@ export class TransactionDetailsComponent implements OnInit {
       this.apiService.getTransactionById(this.transactionId).subscribe({
         next: (res: any) => {
           if (res.status === 200) {
-            this.transaction = res.transaction;
+            this.transaction = res.data;
             this.status = res.status;
           }
         },

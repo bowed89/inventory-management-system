@@ -35,7 +35,7 @@ export class CategoryComponent {
     this.apiService.getAllCategories().subscribe({
       next: (response: any) => {
         if (response.status === 200) {
-          this.categories = response.categories;
+          this.categories = response.data;
         }
       },
       error: (error: any) => {

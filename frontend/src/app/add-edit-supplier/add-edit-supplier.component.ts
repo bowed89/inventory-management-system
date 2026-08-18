@@ -35,8 +35,8 @@ export class AddEditSupplierComponent implements OnInit {
       next: (res: any) => {
         if (res.status === 200) {
           this.formData = {
-            name: res.supplier.name,
-            address: res.supplier.address,
+            name: res.data.name,
+            address: res.data.address,
           };
         }
       },

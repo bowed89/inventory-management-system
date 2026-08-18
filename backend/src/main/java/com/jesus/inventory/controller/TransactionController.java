@@ -1,19 +1,16 @@
 package com.jesus.inventory.controller;
 
-import com.jesus.inventory.dto.CategoryDTO;
-import com.jesus.inventory.dto.Response;
+import com.jesus.inventory.dto.ApiResponse;
+import com.jesus.inventory.dto.TransactionDTO;
 import com.jesus.inventory.dto.TransactionRequest;
-import com.jesus.inventory.dto.UserDTO;
-import com.jesus.inventory.entity.User;
 import com.jesus.inventory.enums.TransactionStatus;
-import com.jesus.inventory.service.CategoryService;
 import com.jesus.inventory.service.TransactionService;
-import com.jesus.inventory.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/transactions")
@@ -23,21 +20,21 @@ public class TransactionController {
 
 
     @PostMapping("/purchase")
-    public ResponseEntity<Response> purchaseInventory(@RequestBody @Valid TransactionRequest transactionRequest) {
+    public ResponseEntity<ApiResponse<Void>> purchaseInventory(@RequestBody @Valid TransactionRequest transactionRequest) {
         return ResponseEntity.ok(transactionService.restockInventory(transactionRequest));
     }
 
     @PostMapping("/sell")
-    public ResponseEntity<Response> sell(@RequestBody @Valid TransactionRequest transactionRequest) {
+    public ResponseEntity<ApiResponse<Void>> sell(@RequestBody @Valid TransactionRequest transactionRequest) {
         return ResponseEntity.ok(transactionService.sell(transactionRequest));
     }
 
     @PostMapping("/return")
-    public ResponseEntity<Response> returnToSupplier(@RequestBody @Valid TransactionRequest transactionRequest) {
+    public ResponseEntity<ApiResponse<Void>> returnToSupplier(@RequestBody @Valid TransactionRequest transactionRequest) {
         return ResponseEntity.ok(transactionService.returnToSupplier(transactionRequest));
     }
     @GetMapping("/all")
-    public ResponseEntity<Response> getAllTransactions(
+    public ResponseEntity<ApiResponse<List<TransactionDTO>>> getAllTransactions(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "1000") int size,
             @RequestParam(required = false) String searchText
@@ -46,12 +43,12 @@ public class TransactionController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Response> getTransactionById(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse<TransactionDTO>> getTransactionById(@PathVariable Long id) {
         return ResponseEntity.ok(transactionService.getTransactionById(id));
     }
 
     @GetMapping("/by-month-year")
-    public ResponseEntity<Response> getAllTransactionsByMonthAndYear(
+    public ResponseEntity<ApiResponse<List<TransactionDTO>>> getAllTransactionsByMonthAndYear(
             @RequestParam int month,
             @RequestParam int year
     ) {
@@ -60,7 +57,7 @@ public class TransactionController {
 
 
     @PutMapping("/update/{transactionId}")
-    public ResponseEntity<Response> updateTransactionStatus(
+    public ResponseEntity<ApiResponse<Void>> updateTransactionStatus(
             @PathVariable Long transactionId,
             @RequestBody @Valid TransactionStatus status
             ) {

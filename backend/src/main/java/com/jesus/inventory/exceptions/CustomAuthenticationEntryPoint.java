@@ -1,6 +1,6 @@
 package com.jesus.inventory.exceptions;
 
-import com.jesus.inventory.dto.Response;
+import com.jesus.inventory.dto.ApiResponse;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -26,7 +26,7 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
                          AuthenticationException authException)
             throws IOException, ServletException {
 
-        Response errorResponse = Response.builder()
+        ApiResponse<Void> errorResponse = ApiResponse.<Void>builder()
                 .status(HttpStatus.UNAUTHORIZED.value())
                 .message(authException.getMessage())
                 .build();

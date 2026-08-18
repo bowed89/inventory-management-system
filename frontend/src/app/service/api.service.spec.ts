@@ -1,20 +1,25 @@
 import { TestBed } from '@angular/core/testing';
 import { provideHttpClient } from '@angular/common/http';
+import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 
 import { ApiService } from './api.service';
+import { environment } from '../../environments/environment';
 
 describe('ApiService', () => {
   let service: ApiService;
+  let httpMock: HttpTestingController;
 
   beforeEach(() => {
     localStorage.clear();
     TestBed.configureTestingModule({
-      providers: [provideHttpClient()]
+      providers: [provideHttpClient(), provideHttpClientTesting()]
     });
     service = TestBed.inject(ApiService);
+    httpMock = TestBed.inject(HttpTestingController);
   });
 
   afterEach(() => {
+    httpMock.verify();
     localStorage.clear();
   });
 
@@ -68,5 +73,36 @@ describe('ApiService', () => {
     expect(service.getImageUrl(undefined)).toBe('');
     expect(service.getImageUrl(null)).toBe('');
     expect(service.getImageUrl('')).toBe('');
+  });
+
+  it('getAllProducts exposes the list under the generic ApiResponse data field', () => {
+    let result: any;
+    service.getAllProducts().subscribe((res) => (result = res));
+
+    const req = httpMock.expectOne(`${environment.apiUrl}/api/products/all`);
+    req.flush({
+      status: 200,
+      message: 'Success',
+      data: [{ id: 1, name: 'Widget', sku: 'SKU-1', price: 10, stockQuantity: 5 }]
+    });
+
+    expect(result.status).toBe(200);
+    expect(result.data.length).toBe(1);
+    expect(result.data[0].name).toBe('Widget');
+  });
+
+  it('loginUser exposes token/role under data instead of top-level fields', () => {
+    let result: any;
+    service.loginUser({ email: 'a@a.com', password: 'secret' }).subscribe((res) => (result = res));
+
+    const req = httpMock.expectOne(`${environment.apiUrl}/api/auth/login`);
+    req.flush({
+      status: 200,
+      message: 'User logged in successfully',
+      data: { token: 'jwt-token', role: 'ADMIN', expirationTime: '12 weeks' }
+    });
+
+    expect(result.data.token).toBe('jwt-token');
+    expect(result.data.role).toBe('ADMIN');
   });
 });

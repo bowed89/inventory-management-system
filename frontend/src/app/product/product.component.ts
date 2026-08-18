@@ -30,7 +30,7 @@ export class ProductComponent implements OnInit {
   fetchProducts(): void {
     this.apiService.getAllProducts().subscribe({
       next: (res: any) => {
-        const products = res.products || [];
+        const products = res.data || [];
         this.totalPages = Math.ceil(products.length / this.itemsPerPage);
         this.products = products.slice((this.currentPage - 1) * this.itemsPerPage, this.currentPage * this.itemsPerPage);
       },

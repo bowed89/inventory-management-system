@@ -1,16 +1,15 @@
 package com.jesus.inventory.controller;
 
+import com.jesus.inventory.dto.ApiResponse;
 import com.jesus.inventory.dto.CategoryDTO;
-import com.jesus.inventory.dto.Response;
-import com.jesus.inventory.dto.UserDTO;
-import com.jesus.inventory.entity.User;
 import com.jesus.inventory.service.CategoryService;
-import com.jesus.inventory.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/categories")
@@ -21,28 +20,28 @@ public class CategoryController {
 
     @PostMapping("/add")
     @PreAuthorize("hasAuthority('ADMIN')")
-    public ResponseEntity<Response> createCategory(@RequestBody @Valid CategoryDTO categoryDTO) {
+    public ResponseEntity<ApiResponse<Void>> createCategory(@RequestBody @Valid CategoryDTO categoryDTO) {
         return ResponseEntity.ok(categoryService.createCategory(categoryDTO));
     }
     @GetMapping("/all")
-    public ResponseEntity<Response> getAllCategories() {
+    public ResponseEntity<ApiResponse<List<CategoryDTO>>> getAllCategories() {
         return ResponseEntity.ok(categoryService.getAllCategories());
     }
 
     @PutMapping("/update/{id}")
     @PreAuthorize("hasAuthority('ADMIN')")
-    public ResponseEntity<Response> updateCategory(@PathVariable Long id, @RequestBody CategoryDTO categoryDTO) {
+    public ResponseEntity<ApiResponse<Void>> updateCategory(@PathVariable Long id, @RequestBody CategoryDTO categoryDTO) {
         return ResponseEntity.ok(categoryService.updateCategory(id, categoryDTO));
     }
 
     @DeleteMapping("/delete/{id}")
     @PreAuthorize("hasAuthority('ADMIN')")
-    public ResponseEntity<Response> deleteCategory(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse<Void>> deleteCategory(@PathVariable Long id) {
         return ResponseEntity.ok(categoryService.deleteCategory(id));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Response> getCategoryById(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse<CategoryDTO>> getCategoryById(@PathVariable Long id) {
         return ResponseEntity.ok(categoryService.getCategoryById(id));
     }
 

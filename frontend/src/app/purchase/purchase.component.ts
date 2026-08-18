@@ -30,7 +30,7 @@ export class PurchaseComponent implements OnInit {
     this.apiService.getAllProducts().subscribe({
       next: (res: any) => {
         if (res.status === 200) {
-          this.products = res.products;
+          this.products = res.data;
         }
       },
       error: (error: any) => {
@@ -41,7 +41,7 @@ export class PurchaseComponent implements OnInit {
     this.apiService.getAllSuppliers().subscribe({
       next: (res: any) => {
         if (res.status === 200) {
-          this.suppliers = res.suppliers;
+          this.suppliers = res.data;
         }
       },
       error: (error: any) => {

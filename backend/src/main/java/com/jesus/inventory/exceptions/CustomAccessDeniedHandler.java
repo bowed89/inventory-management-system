@@ -1,6 +1,6 @@
 package com.jesus.inventory.exceptions;
 
-import com.jesus.inventory.dto.Response;
+import com.jesus.inventory.dto.ApiResponse;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -24,7 +24,7 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler {
                        AccessDeniedException accessDeniedException)
             throws IOException, ServletException {
 
-        Response errorResponse = Response.builder()
+        ApiResponse<Void> errorResponse = ApiResponse.<Void>builder()
                 .status(HttpStatus.FORBIDDEN.value())
                 .message(accessDeniedException.getMessage())
                 .build();

@@ -24,7 +24,7 @@ export class ProfileComponent implements OnInit {
   fetchUserInfo(): void {
     this.apiService.getLoggedInUserInfo().subscribe({
       next: (res: any) => {
-        this.user = res;
+        this.user = res.data;
       },
       error: (error: any) => {
         this.showMessage(error?.error?.message || error?.message || 'An error occurred while getting user info' + error);

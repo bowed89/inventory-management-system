@@ -1,6 +1,6 @@
 package com.jesus.inventory.controller;
 
-import com.jesus.inventory.dto.Response;
+import com.jesus.inventory.dto.ApiResponse;
 import com.jesus.inventory.security.AuthFilter;
 import com.jesus.inventory.security.SecurityFilter;
 import com.jesus.inventory.service.ProductService;
@@ -54,7 +54,7 @@ class ProductControllerValidationTest {
     void saveProduct_acceptsValidPayload() throws Exception {
         MockMultipartFile image = new MockMultipartFile("imageFile", "logo.png", "image/png", "bytes".getBytes());
         when(productService.saveProduct(any(), any()))
-                .thenReturn(Response.builder().status(200).message("ok").build());
+                .thenReturn(ApiResponse.<Void>builder().status(200).message("ok").build());
 
         mockMvc.perform(multipart("/api/products/add")
                         .file(image)

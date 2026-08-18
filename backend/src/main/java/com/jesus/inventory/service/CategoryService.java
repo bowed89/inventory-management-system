@@ -1,14 +1,16 @@
 package com.jesus.inventory.service;
 
 
+import com.jesus.inventory.dto.ApiResponse;
 import com.jesus.inventory.dto.CategoryDTO;
-import com.jesus.inventory.dto.Response;
+
+import java.util.List;
 
 public interface CategoryService {
-    Response createCategory(CategoryDTO categoryDTO);
-    Response getAllCategories();
-    Response getCategoryById(Long id);
-    Response updateCategory(Long id, CategoryDTO categoryDTO);
-    Response deleteCategory(Long id);
+    ApiResponse<Void> createCategory(CategoryDTO categoryDTO);
+    ApiResponse<List<CategoryDTO>> getAllCategories();
+    ApiResponse<CategoryDTO> getCategoryById(Long id);
+    ApiResponse<Void> updateCategory(Long id, CategoryDTO categoryDTO);
+    ApiResponse<Void> deleteCategory(Long id);
 
 }

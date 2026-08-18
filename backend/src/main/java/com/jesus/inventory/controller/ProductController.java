@@ -1,9 +1,7 @@
 package com.jesus.inventory.controller;
 
-import com.jesus.inventory.dto.CategoryDTO;
+import com.jesus.inventory.dto.ApiResponse;
 import com.jesus.inventory.dto.ProductDTO;
-import com.jesus.inventory.dto.Response;
-import com.jesus.inventory.service.CategoryService;
 import com.jesus.inventory.service.ProductService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/products")
@@ -23,7 +22,7 @@ public class ProductController {
 
     @PostMapping("/add")
     @PreAuthorize("hasAuthority('ADMIN')")
-    public ResponseEntity<Response> saveProduct(
+    public ResponseEntity<ApiResponse<Void>> saveProduct(
             @RequestParam("imageFile") MultipartFile imageFile,
             @Valid @ModelAttribute ProductDTO productDTO
     ) {
@@ -32,7 +31,7 @@ public class ProductController {
 
     @PutMapping("/update")
     @PreAuthorize("hasAuthority('ADMIN')")
-    public ResponseEntity<Response> updateProduct(
+    public ResponseEntity<ApiResponse<Void>> updateProduct(
             @RequestParam(value = "imageFile", required = false) MultipartFile imageFile,
             @RequestParam(value = "name", required = false) String  name,
             @RequestParam(value = "sku", required = false) String  sku,
@@ -55,18 +54,18 @@ public class ProductController {
         return ResponseEntity.ok(productService.updateProduct(productDTO, imageFile));
     }
     @GetMapping("/all")
-    public ResponseEntity<Response> getAllProducts() {
+    public ResponseEntity<ApiResponse<List<ProductDTO>>> getAllProducts() {
         return ResponseEntity.ok(productService.getAllProducts());
     }
 
     @DeleteMapping("/delete/{id}")
     @PreAuthorize("hasAuthority('ADMIN')")
-    public ResponseEntity<Response> deleteProduct(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse<Void>> deleteProduct(@PathVariable Long id) {
         return ResponseEntity.ok(productService.deleteProduct(id));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Response> getProductById(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse<ProductDTO>> getProductById(@PathVariable Long id) {
         return ResponseEntity.ok(productService.getProductById(id));
     }
 

@@ -3,10 +3,13 @@ import { Injectable, EventEmitter } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { ApiResponse } from '../models/api-response.model';
-import { LoginRequest, RegisterRequest } from '../models/auth.model';
+import { LoginData, LoginRequest, RegisterRequest } from '../models/auth.model';
 import { Category } from '../models/category.model';
+import { Product } from '../models/product.model';
 import { Supplier } from '../models/supplier.model';
+import { Transaction } from '../models/transaction.model';
 import { TransactionRequestBody } from '../models/transaction-request.model';
+import { User } from '../models/user.model';
 
 @Injectable({
   providedIn: 'root'
@@ -59,108 +62,108 @@ export class ApiService {
   }
 
   // Auth & Users API methods
-  registerUser(body: RegisterRequest): Observable<ApiResponse> {
-    return this.http.post<ApiResponse>(`${ApiService.BASE_URL}/auth/register`, body);
+  registerUser(body: RegisterRequest): Observable<ApiResponse<void>> {
+    return this.http.post<ApiResponse<void>>(`${ApiService.BASE_URL}/auth/register`, body);
   }
 
-  loginUser(body: LoginRequest): Observable<ApiResponse> {
-    return this.http.post<ApiResponse>(`${ApiService.BASE_URL}/auth/login`, body);
+  loginUser(body: LoginRequest): Observable<ApiResponse<LoginData>> {
+    return this.http.post<ApiResponse<LoginData>>(`${ApiService.BASE_URL}/auth/login`, body);
   }
 
-  getLoggedInUserInfo(): Observable<ApiResponse> {
-    return this.http.get<ApiResponse>(`${ApiService.BASE_URL}/users/current`);
+  getLoggedInUserInfo(): Observable<ApiResponse<User>> {
+    return this.http.get<ApiResponse<User>>(`${ApiService.BASE_URL}/users/current`);
   }
 
   // Category endpoints
-  createCategory(body: Partial<Category>): Observable<ApiResponse> {
-    return this.http.post<ApiResponse>(`${ApiService.BASE_URL}/categories/add`, body);
+  createCategory(body: Partial<Category>): Observable<ApiResponse<void>> {
+    return this.http.post<ApiResponse<void>>(`${ApiService.BASE_URL}/categories/add`, body);
   }
 
-  getAllCategories(): Observable<ApiResponse> {
-    return this.http.get<ApiResponse>(`${ApiService.BASE_URL}/categories/all`);
+  getAllCategories(): Observable<ApiResponse<Category[]>> {
+    return this.http.get<ApiResponse<Category[]>>(`${ApiService.BASE_URL}/categories/all`);
   }
 
-  getCategoryById(id: string): Observable<ApiResponse> {
-    return this.http.get<ApiResponse>(`${ApiService.BASE_URL}/categories/${id}`);
+  getCategoryById(id: string): Observable<ApiResponse<Category>> {
+    return this.http.get<ApiResponse<Category>>(`${ApiService.BASE_URL}/categories/${id}`);
   }
 
-  updateCategory(id: string, body: Partial<Category>): Observable<ApiResponse> {
-    return this.http.put<ApiResponse>(`${ApiService.BASE_URL}/categories/update/${id}`, body);
+  updateCategory(id: string, body: Partial<Category>): Observable<ApiResponse<void>> {
+    return this.http.put<ApiResponse<void>>(`${ApiService.BASE_URL}/categories/update/${id}`, body);
   }
 
-  deleteCategory(id: string): Observable<ApiResponse> {
-    return this.http.delete<ApiResponse>(`${ApiService.BASE_URL}/categories/delete/${id}`);
+  deleteCategory(id: string): Observable<ApiResponse<void>> {
+    return this.http.delete<ApiResponse<void>>(`${ApiService.BASE_URL}/categories/delete/${id}`);
   }
 
   // Supplier endpoints
-  addSupplier(body: Partial<Supplier>): Observable<ApiResponse> {
-    return this.http.post<ApiResponse>(`${ApiService.BASE_URL}/suppliers/add`, body);
+  addSupplier(body: Partial<Supplier>): Observable<ApiResponse<void>> {
+    return this.http.post<ApiResponse<void>>(`${ApiService.BASE_URL}/suppliers/add`, body);
   }
 
-  getAllSuppliers(): Observable<ApiResponse> {
-    return this.http.get<ApiResponse>(`${ApiService.BASE_URL}/suppliers/all`);
+  getAllSuppliers(): Observable<ApiResponse<Supplier[]>> {
+    return this.http.get<ApiResponse<Supplier[]>>(`${ApiService.BASE_URL}/suppliers/all`);
   }
 
-  getSupplierById(id: string): Observable<ApiResponse> {
-    return this.http.get<ApiResponse>(`${ApiService.BASE_URL}/suppliers/${id}`);
+  getSupplierById(id: string): Observable<ApiResponse<Supplier>> {
+    return this.http.get<ApiResponse<Supplier>>(`${ApiService.BASE_URL}/suppliers/${id}`);
   }
 
-  updateSupplier(id: string, body: Partial<Supplier>): Observable<ApiResponse> {
-    return this.http.put<ApiResponse>(`${ApiService.BASE_URL}/suppliers/update/${id}`, body);
+  updateSupplier(id: string, body: Partial<Supplier>): Observable<ApiResponse<void>> {
+    return this.http.put<ApiResponse<void>>(`${ApiService.BASE_URL}/suppliers/update/${id}`, body);
   }
 
-  deleteSupplier(id: string): Observable<ApiResponse> {
-    return this.http.delete<ApiResponse>(`${ApiService.BASE_URL}/suppliers/delete/${id}`);
+  deleteSupplier(id: string): Observable<ApiResponse<void>> {
+    return this.http.delete<ApiResponse<void>>(`${ApiService.BASE_URL}/suppliers/delete/${id}`);
   }
 
   // Product endpoints
-  addProduct(body: FormData): Observable<ApiResponse> {
-    return this.http.post<ApiResponse>(`${ApiService.BASE_URL}/products/add`, body);
+  addProduct(body: FormData): Observable<ApiResponse<void>> {
+    return this.http.post<ApiResponse<void>>(`${ApiService.BASE_URL}/products/add`, body);
   }
 
-  updateProduct(body: FormData): Observable<ApiResponse> {
-    return this.http.put<ApiResponse>(`${ApiService.BASE_URL}/products/update`, body);
+  updateProduct(body: FormData): Observable<ApiResponse<void>> {
+    return this.http.put<ApiResponse<void>>(`${ApiService.BASE_URL}/products/update`, body);
   }
 
-  getAllProducts(): Observable<ApiResponse> {
-    return this.http.get<ApiResponse>(`${ApiService.BASE_URL}/products/all`);
+  getAllProducts(): Observable<ApiResponse<Product[]>> {
+    return this.http.get<ApiResponse<Product[]>>(`${ApiService.BASE_URL}/products/all`);
   }
 
-  getProductById(id: string): Observable<ApiResponse> {
-    return this.http.get<ApiResponse>(`${ApiService.BASE_URL}/products/${id}`);
+  getProductById(id: string): Observable<ApiResponse<Product>> {
+    return this.http.get<ApiResponse<Product>>(`${ApiService.BASE_URL}/products/${id}`);
   }
 
-  deleteProduct(id: string): Observable<ApiResponse> {
-    return this.http.delete<ApiResponse>(`${ApiService.BASE_URL}/products/delete/${id}`);
+  deleteProduct(id: string): Observable<ApiResponse<void>> {
+    return this.http.delete<ApiResponse<void>>(`${ApiService.BASE_URL}/products/delete/${id}`);
   }
 
   // Transaction endpoints
-  purchaseProduct(body: TransactionRequestBody): Observable<ApiResponse> {
-    return this.http.post<ApiResponse>(`${ApiService.BASE_URL}/transactions/purchase`, body);
+  purchaseProduct(body: TransactionRequestBody): Observable<ApiResponse<void>> {
+    return this.http.post<ApiResponse<void>>(`${ApiService.BASE_URL}/transactions/purchase`, body);
   }
 
-  sellProduct(body: TransactionRequestBody): Observable<ApiResponse> {
-    return this.http.post<ApiResponse>(`${ApiService.BASE_URL}/transactions/sell`, body);
+  sellProduct(body: TransactionRequestBody): Observable<ApiResponse<void>> {
+    return this.http.post<ApiResponse<void>>(`${ApiService.BASE_URL}/transactions/sell`, body);
   }
 
-  getAllTransactions(searchText: string): Observable<ApiResponse> {
-    return this.http.get<ApiResponse>(`${ApiService.BASE_URL}/transactions/all`, {
+  getAllTransactions(searchText: string): Observable<ApiResponse<Transaction[]>> {
+    return this.http.get<ApiResponse<Transaction[]>>(`${ApiService.BASE_URL}/transactions/all`, {
       params: { searchText: searchText }
     });
   }
 
-  getTransactionById(id: string): Observable<ApiResponse> {
-    return this.http.get<ApiResponse>(`${ApiService.BASE_URL}/transactions/${id}`);
+  getTransactionById(id: string): Observable<ApiResponse<Transaction>> {
+    return this.http.get<ApiResponse<Transaction>>(`${ApiService.BASE_URL}/transactions/${id}`);
   }
 
-  updateTransactionStatus(id: string, status: string): Observable<ApiResponse> {
-    return this.http.put<ApiResponse>(`${ApiService.BASE_URL}/transactions/update/${id}`, JSON.stringify(status), {
+  updateTransactionStatus(id: string, status: string): Observable<ApiResponse<void>> {
+    return this.http.put<ApiResponse<void>>(`${ApiService.BASE_URL}/transactions/update/${id}`, JSON.stringify(status), {
       headers: new HttpHeaders({ 'Content-Type': 'application/json' })
     });
   }
 
-  getTransactionByMonthAndYear(month: number, year: number): Observable<ApiResponse> {
-    return this.http.get<ApiResponse>(`${ApiService.BASE_URL}/transactions/by-month-year`, {
+  getTransactionByMonthAndYear(month: number, year: number): Observable<ApiResponse<Transaction[]>> {
+    return this.http.get<ApiResponse<Transaction[]>>(`${ApiService.BASE_URL}/transactions/by-month-year`, {
       params: { month: month, year: year }
     });
   }

@@ -1,6 +1,6 @@
 package com.jesus.inventory.exceptions;
 
-import com.jesus.inventory.dto.Response;
+import com.jesus.inventory.dto.ApiResponse;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +20,7 @@ class GlobalExceptionHandlerTest {
 
     @Test
     void handleAllExceptions_returns500WithMatchingBodyStatus() {
-        ResponseEntity<Response> result = handler.handleAllExceptions(new RuntimeException("boom"));
+        ResponseEntity<ApiResponse<Void>> result = handler.handleAllExceptions(new RuntimeException("boom"));
 
         assertThat(result.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
         assertThat(result.getBody().getStatus()).isEqualTo(500);
@@ -29,7 +29,7 @@ class GlobalExceptionHandlerTest {
 
     @Test
     void handleNotFoundExceptions_returns404WithMatchingBodyStatus() {
-        ResponseEntity<Response> result = handler.handleNotFoundExceptions(new NotFoundException("Product Not Found"));
+        ResponseEntity<ApiResponse<Void>> result = handler.handleNotFoundExceptions(new NotFoundException("Product Not Found"));
 
         assertThat(result.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
         assertThat(result.getBody().getStatus()).isEqualTo(404);
@@ -37,7 +37,7 @@ class GlobalExceptionHandlerTest {
 
     @Test
     void handleNameValueRequiredException_returns400() {
-        ResponseEntity<Response> result =
+        ResponseEntity<ApiResponse<Void>> result =
                 handler.handleNameValueRequiredException(new NameValueRequiredException("Supplier ID is required"));
 
         assertThat(result.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
@@ -46,7 +46,7 @@ class GlobalExceptionHandlerTest {
 
     @Test
     void handleInvalidCredentialsException_returns401() {
-        ResponseEntity<Response> result =
+        ResponseEntity<ApiResponse<Void>> result =
                 handler.handleInvalidCredentialsException(new InvalidCredentialsException("Bad credentials"));
 
         assertThat(result.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
@@ -55,7 +55,7 @@ class GlobalExceptionHandlerTest {
 
     @Test
     void handleInsufficientStockException_returns400() {
-        ResponseEntity<Response> result =
+        ResponseEntity<ApiResponse<Void>> result =
                 handler.handleInsufficientStockException(new InsufficientStockException("Not enough stock"));
 
         assertThat(result.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
@@ -72,7 +72,7 @@ class GlobalExceptionHandlerTest {
         MethodArgumentNotValidException ex = mock(MethodArgumentNotValidException.class);
         when(ex.getBindingResult()).thenReturn(bindingResult);
 
-        ResponseEntity<Response> result = handler.handleMethodArgumentNotValidException(ex);
+        ResponseEntity<ApiResponse<Void>> result = handler.handleMethodArgumentNotValidException(ex);
 
         assertThat(result.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
         assertThat(result.getBody().getMessage()).contains("Name is required").contains("Sku is required");
