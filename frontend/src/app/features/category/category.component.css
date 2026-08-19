@@ -5,6 +5,8 @@
     .category-header {
     margin-left: 12px;
     display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
     align-items: center;
     margin-bottom: 20px;
     }
@@ -14,15 +16,19 @@
     }
 
     .add-cat {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
     margin: 0 auto;
     }
 
     .category-header input {
     padding: 10px;
-    margin-right: 10px;
-    width: 300px;
+    width: 100%;
+    max-width: 300px;
     border: 1px solid #ddd;
     font-size: 16px;
+    box-sizing: border-box;
     }
 
     .category-header button {
@@ -42,6 +48,8 @@
 
     .category-item {
     display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
     justify-content: space-between;
     padding: 18px;
     margin: 5px;

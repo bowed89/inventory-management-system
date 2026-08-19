@@ -40,7 +40,7 @@ export class TransactionComponent implements OnInit {
         this.transactions = transactions.slice((this.currentPage - 1) * this.itemsPerPage, this.currentPage * this.itemsPerPage);
       },
       error: (error: any) => {
-        this.notificationService.show(error?.error?.message || error?.message || 'An error occurred while showing transactions');
+        this.notificationService.show(error?.error?.message || error?.message || 'An error occurred while showing transactions', 'error');
       }
     })
   }

@@ -21,12 +21,3 @@ button {
 button:hover {
     background-color: #2F4F4F;
 }
-
-.message {
-    background-color: #FA9099;
-    color: #155724;
-    padding: 10px;
-    border-radius: 5px;
-    text-align: center;
-    margin-bottom: 30px;
-}

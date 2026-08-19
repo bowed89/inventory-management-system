@@ -41,7 +41,7 @@ export class PurchaseComponent implements OnInit {
         }
       },
       error: (error: any) => {
-        this.notificationService.show(error?.error?.message || error?.message || 'An error occurred while showing products');
+        this.notificationService.show(error?.error?.message || error?.message || 'An error occurred while showing products', 'error');
       }
     });
 
@@ -52,7 +52,7 @@ export class PurchaseComponent implements OnInit {
         }
       },
       error: (error: any) => {
-        this.notificationService.show(error?.error?.message || error?.message || 'An error occurred while showing suppliers');
+        this.notificationService.show(error?.error?.message || error?.message || 'An error occurred while showing suppliers', 'error');
       }
     });
 
@@ -60,7 +60,7 @@ export class PurchaseComponent implements OnInit {
 
   handleSubmit(): void {
     if (this.purchaseForm.invalid) {
-      this.notificationService.show('Please fill in all fields');
+      this.notificationService.show('Please fill in all fields', 'error');
       return;
     }
 
@@ -75,12 +75,12 @@ export class PurchaseComponent implements OnInit {
     this.apiService.purchaseProduct(body).subscribe({
       next: (res: any) => {
         if (res.status === 200) {
-          this.notificationService.show(res.message);
+          this.notificationService.show(res.message, "success");
           this.resetForm();
         }
       },
       error: (error: any) => {
-        this.notificationService.show(error?.error?.message || error?.message || 'An error occurred while purchasing product');
+        this.notificationService.show(error?.error?.message || error?.message || 'An error occurred while purchasing product', 'error');
       }
     });
   }

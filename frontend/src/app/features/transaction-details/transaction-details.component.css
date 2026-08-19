@@ -53,8 +53,20 @@
 .transaction-status-update {
   margin-top: 20px;
   display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
   align-items: center;
   justify-content: flex-start;
+}
+
+@media (max-width: 480px) {
+  .transaction-details-page {
+    padding: 15px;
+  }
+
+  .section-card {
+    padding: 15px;
+  }
 }
 
 .transaction-status-update label {

@@ -56,7 +56,7 @@ export class AddEditProductComponent implements OnInit {
         }
       },
       error: (error: any) => {
-        this.notificationService.show(error?.error?.message || error?.message || 'An error occurred while showing categories');
+        this.notificationService.show(error?.error?.message || error?.message || 'An error occurred while showing categories', 'error');
       }
     })
   }
@@ -78,11 +78,11 @@ export class AddEditProductComponent implements OnInit {
           this.imageUrl = product.imageUrl;
 
         } else {
-          this.notificationService.show(response.message);
+          this.notificationService.show(response.message, 'error');
         }
       },
       error: (error: any) => {
-        this.notificationService.show(error?.error?.message || error?.message || 'An error occurred while showing categories');
+        this.notificationService.show(error?.error?.message || error?.message || 'An error occurred while showing categories', 'error');
       }
     })
   }
@@ -108,7 +108,7 @@ export class AddEditProductComponent implements OnInit {
     event.preventDefault();
 
     if (this.productForm.invalid) {
-      this.notificationService.show('Please fill in all required fields');
+      this.notificationService.show('Please fill in all required fields', 'error');
       return;
     }
 
@@ -132,12 +132,12 @@ export class AddEditProductComponent implements OnInit {
       this.apiService.updateProduct(formData).subscribe({
         next: (response: any) => {
           if (response.status === 200) {
-            this.notificationService.show("Product updated successfully");
+            this.notificationService.show("Product updated successfully", "success");
             this.router.navigate(['/product']);
           }
         },
         error: (error: any) => {
-          this.notificationService.show(error?.error?.message || error?.message || 'An error occurred while updating a product');
+          this.notificationService.show(error?.error?.message || error?.message || 'An error occurred while updating a product', 'error');
         }
       })
 
@@ -145,12 +145,12 @@ export class AddEditProductComponent implements OnInit {
       this.apiService.addProduct(formData).subscribe({
         next: (response: any) => {
           if (response.status === 200) {
-            this.notificationService.show("Product saved successfully");
+            this.notificationService.show("Product saved successfully", "success");
             this.router.navigate(['/product']);
           }
         },
         error: (error: any) => {
-          this.notificationService.show(error?.error?.message || error?.message || 'An error occurred while saving a product');
+          this.notificationService.show(error?.error?.message || error?.message || 'An error occurred while saving a product', 'error');
         }
       })
     }

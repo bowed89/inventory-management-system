@@ -31,11 +31,11 @@ export class SupplierComponent implements OnInit {
           this.suppliers = response.data;
 
         } else {
-          this.notificationService.show(response.message);
+          this.notificationService.show(response.message, "error");
         }
       },
       error: (error: any) => {
-        this.notificationService.show(error?.error?.message || error?.message || 'Unable to get all suppliers' + error);
+        this.notificationService.show(error?.error?.message || error?.message || 'Unable to get all suppliers' + error, 'error');
       }
     });
   }
@@ -53,12 +53,12 @@ export class SupplierComponent implements OnInit {
       this.apiService.deleteSupplier(supplierId).subscribe({
         next: (response: any) => {
           if (response.status === 200) {
-            this.notificationService.show("Supplier deleted successfully");
+            this.notificationService.show("Supplier deleted successfully", "success");
             this.getSuppliers();
           }
         },
         error: (error: any) => {
-          this.notificationService.show(error?.error?.message || error?.message || 'An error occurred while deleting supplier' + error);
+          this.notificationService.show(error?.error?.message || error?.message || 'An error occurred while deleting supplier' + error, 'error');
         }
       })
     }

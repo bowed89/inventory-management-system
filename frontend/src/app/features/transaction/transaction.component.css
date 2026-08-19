@@ -8,6 +8,8 @@ h1 {
 
 .transactions-header {
   display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 20px;
@@ -15,7 +17,13 @@ h1 {
 
 .transaction-search {
   display: flex;
+  flex-wrap: wrap;
   gap: 10px;
+}
+
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
 }
 
 .transaction-search input {
@@ -26,6 +34,7 @@ h1 {
 
 .transactions-table {
   width: 100%;
+  min-width: 600px;
   border-collapse: collapse;
   margin-top: 20px;
 }

@@ -50,7 +50,8 @@ export class AddEditSupplierComponent implements OnInit {
         this.notificationService.show(
           error?.error?.message ||
           error?.message ||
-          'Unable to get supplier by id' + error
+          'Unable to get supplier by id' + error,
+          'error'
         );
       },
     });
@@ -59,7 +60,7 @@ export class AddEditSupplierComponent implements OnInit {
   // HANDLE FORM SUBMISSION
   handleSubmit() {
     if (this.supplierForm.invalid) {
-      this.notificationService.show('All fields are nessary');
+      this.notificationService.show('All fields are nessary', 'error');
       return;
     }
 
@@ -67,24 +68,24 @@ export class AddEditSupplierComponent implements OnInit {
       this.apiService.updateSupplier(this.supplierId!, this.supplierForm.getRawValue()).subscribe({
         next: (res: any) => {
           if (res.status === 200) {
-            this.notificationService.show("Supplier updated successfully");
+            this.notificationService.show("Supplier updated successfully", "success");
             this.router.navigate(['/supplier'])
           }
         },
         error: (error) => {
-          this.notificationService.show(error?.error?.message || error?.message || "Unable to edit supplier" + error)
+          this.notificationService.show(error?.error?.message || error?.message || "Unable to edit supplier" + error, "error")
         }
       })
     } else {
       this.apiService.addSupplier(this.supplierForm.getRawValue()).subscribe({
         next: (res: any) => {
           if (res.status === 200) {
-            this.notificationService.show("Supplier Added successfully");
+            this.notificationService.show("Supplier Added successfully", "success");
             this.router.navigate(['/supplier'])
           }
         },
         error: (error) => {
-          this.notificationService.show(error?.error?.message || error?.message || "Unable to Add supplier" + error)
+          this.notificationService.show(error?.error?.message || error?.message || "Unable to Add supplier" + error, "error")
         }
       })
     }

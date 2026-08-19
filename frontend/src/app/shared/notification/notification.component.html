@@ -1,1 +1,1 @@
-<div *ngIf="message" class="global-notification">{{ message }}</div>
+<div *ngIf="message" class="global-notification" [class.success]="type === 'success'" [class.error]="type === 'error'">{{ message }}</div>

@@ -30,7 +30,7 @@ export class LoginComponent {
 
   async handleSubmit() {
     if (this.loginForm.invalid) {
-      this.notificationService.show("A valid email and password are required");
+      this.notificationService.show("A valid email and password are required", "error");
       return;
     }
 
@@ -44,7 +44,7 @@ export class LoginComponent {
       }
     } catch (error: any) {
       console.error(error);
-      this.notificationService.show(error?.error?.message || error?.message || 'Unable to login a user' + error);
+      this.notificationService.show(error?.error?.message || error?.message || 'Unable to login a user' + error, 'error');
     }
   }
 

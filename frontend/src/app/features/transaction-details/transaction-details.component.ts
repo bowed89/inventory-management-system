@@ -49,7 +49,7 @@ export class TransactionDetailsComponent implements OnInit {
           }
         },
         error: (error: any) => {
-          this.notificationService.show(error?.error?.message || error?.message || 'An error occurred while showing transaction by id' + error);
+          this.notificationService.show(error?.error?.message || error?.message || 'An error occurred while showing transaction by id' + error, 'error');
         }
       })
     }
@@ -68,7 +68,7 @@ export class TransactionDetailsComponent implements OnInit {
           this.router.navigate(['/transaction']);
         },
         error: (error: any) => {
-          this.notificationService.show(error?.error?.message || error?.message || 'An error occurred while updating transaction by id' + error);
+          this.notificationService.show(error?.error?.message || error?.message || 'An error occurred while updating transaction by id' + error, 'error');
         }
 
       })

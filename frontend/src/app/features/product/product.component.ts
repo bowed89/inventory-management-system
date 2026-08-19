@@ -36,7 +36,7 @@ export class ProductComponent implements OnInit {
         this.products = products.slice((this.currentPage - 1) * this.itemsPerPage, this.currentPage * this.itemsPerPage);
       },
       error: (error: any) => {
-        this.notificationService.show(error?.error?.message || error?.message || 'An error occurred while showing products');
+        this.notificationService.show(error?.error?.message || error?.message || 'An error occurred while showing products', 'error');
       }
     })
 
@@ -47,12 +47,12 @@ export class ProductComponent implements OnInit {
       this.apiService.deleteProduct(productId).subscribe({
         next: (response: any) => {
           if (response.status === 200) {
-            this.notificationService.show("Product deleted successfully");
+            this.notificationService.show("Product deleted successfully", "success");
             this.fetchProducts();
           }
         },
         error: (error: any) => {
-          this.notificationService.show(error?.error?.message || error?.message || 'An error occurred while deleting product' + error);
+          this.notificationService.show(error?.error?.message || error?.message || 'An error occurred while deleting product' + error, 'error');
         }
       })
     }

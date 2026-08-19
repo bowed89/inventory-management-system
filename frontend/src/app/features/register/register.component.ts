@@ -32,7 +32,7 @@ export class RegisterComponent {
 
   async handleSubmit() {
     if (this.registerForm.invalid) {
-      this.notificationService.show("All fields are required");
+      this.notificationService.show("All fields are required", "error");
       return;
     }
 
@@ -40,12 +40,12 @@ export class RegisterComponent {
       const response = await firstValueFrom(this.apiService.registerUser(this.registerForm.getRawValue() as any));
 
       if (response.status === 200) {
-        this.notificationService.show(response.message);
+        this.notificationService.show(response.message, "success");
         this.router.navigate(['/login']);
       }
     } catch (error: any) {
       console.error('Error registering user:', error);
-      this.notificationService.show(error?.error?.message || error?.message || 'An error occurred during registration' + error);
+      this.notificationService.show(error?.error?.message || error?.message || 'An error occurred during registration' + error, 'error');
     }
   }
 

@@ -1,7 +1,8 @@
 .supplier-form-page {
   padding: 20px;
   border-radius: 10px;
-  width: 50%;
+  width: 90%;
+  max-width: 500px;
   margin: 0 auto; /* Center the form on the page */
   margin-top: 3rem;
   box-shadow: 0 1px 1px #008080;

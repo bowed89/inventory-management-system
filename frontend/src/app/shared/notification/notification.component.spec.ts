@@ -24,7 +24,7 @@ describe('NotificationComponent', () => {
   });
 
   it('renders the message emitted by NotificationService', () => {
-    notificationService.show('Hello world');
+    notificationService.show('Hello world', 'success');
     fixture.detectChanges();
 
     const el = fixture.nativeElement as HTMLElement;
@@ -34,5 +34,23 @@ describe('NotificationComponent', () => {
   it('renders nothing when there is no active message', () => {
     const el = fixture.nativeElement as HTMLElement;
     expect(el.querySelector('.global-notification')).toBeNull();
+  });
+
+  it('applies the success class for success notifications', () => {
+    notificationService.show('Saved', 'success');
+    fixture.detectChanges();
+
+    const el = fixture.nativeElement as HTMLElement;
+    expect(el.querySelector('.global-notification.success')).not.toBeNull();
+    expect(el.querySelector('.global-notification.error')).toBeNull();
+  });
+
+  it('applies the error class for error notifications', () => {
+    notificationService.show('Something failed', 'error');
+    fixture.detectChanges();
+
+    const el = fixture.nativeElement as HTMLElement;
+    expect(el.querySelector('.global-notification.error')).not.toBeNull();
+    expect(el.querySelector('.global-notification.success')).toBeNull();
   });
 });

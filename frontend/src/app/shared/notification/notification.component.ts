@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
-import { NotificationService } from '../../core/services/notification.service';
+import { NotificationService, NotificationType } from '../../core/services/notification.service';
 
 @Component({
   selector: 'app-notification',
@@ -12,13 +12,15 @@ import { NotificationService } from '../../core/services/notification.service';
 })
 export class NotificationComponent implements OnInit, OnDestroy {
   message = '';
+  type: NotificationType = 'error';
   private subscription?: Subscription;
 
   constructor(private notificationService: NotificationService) {}
 
   ngOnInit(): void {
-    this.subscription = this.notificationService.message$.subscribe((msg) => {
-      this.message = msg;
+    this.subscription = this.notificationService.notification$.subscribe(({ message, type }) => {
+      this.message = message;
+      this.type = type;
     });
   }
 

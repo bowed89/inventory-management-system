@@ -1,21 +1,28 @@
 import { Injectable } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
 
+export type NotificationType = 'success' | 'error';
+
+export interface Notification {
+  message: string;
+  type: NotificationType;
+}
+
 @Injectable({
   providedIn: 'root'
 })
 export class NotificationService {
-  private messageSubject = new Subject<string>();
+  private notificationSubject = new Subject<Notification>();
   private timeoutId: ReturnType<typeof setTimeout> | null = null;
 
-  readonly message$: Observable<string> = this.messageSubject.asObservable();
+  readonly notification$: Observable<Notification> = this.notificationSubject.asObservable();
 
-  show(message: string, durationMs = 3000): void {
+  show(message: string, type: NotificationType = 'error', durationMs = 3000): void {
     if (this.timeoutId) {
       clearTimeout(this.timeoutId);
     }
 
-    this.messageSubject.next(message);
-    this.timeoutId = setTimeout(() => this.messageSubject.next(''), durationMs);
+    this.notificationSubject.next({ message, type });
+    this.timeoutId = setTimeout(() => this.notificationSubject.next({ message: '', type }), durationMs);
   }
 }

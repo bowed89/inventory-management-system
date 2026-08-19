@@ -41,7 +41,7 @@ export class SellComponent implements OnInit {
         }
       },
       error: (error: any) => {
-        this.notificationService.show(error?.error?.message || error?.message || 'An error occurred while showing products');
+        this.notificationService.show(error?.error?.message || error?.message || 'An error occurred while showing products', 'error');
       }
     });
 
@@ -49,7 +49,7 @@ export class SellComponent implements OnInit {
 
   handleSubmit(): void {
     if (this.sellForm.invalid) {
-      this.notificationService.show('Please fill in all fields');
+      this.notificationService.show('Please fill in all fields', 'error');
       return;
     }
 
@@ -63,12 +63,12 @@ export class SellComponent implements OnInit {
     this.apiService.sellProduct(body).subscribe({
       next: (res: any) => {
         if (res.status === 200) {
-          this.notificationService.show(res.message);
+          this.notificationService.show(res.message, "success");
           this.resetForm();
         }
       },
       error: (error: any) => {
-        this.notificationService.show(error?.error?.message || error?.message || 'An error occurred while selling product');
+        this.notificationService.show(error?.error?.message || error?.message || 'An error occurred while selling product', 'error');
       }
     });
   }

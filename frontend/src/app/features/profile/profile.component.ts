@@ -28,7 +28,7 @@ export class ProfileComponent implements OnInit {
         this.user = res.data;
       },
       error: (error: any) => {
-        this.notificationService.show(error?.error?.message || error?.message || 'An error occurred while getting user info' + error);
+        this.notificationService.show(error?.error?.message || error?.message || 'An error occurred while getting user info' + error, 'error');
       }
     });
   }
